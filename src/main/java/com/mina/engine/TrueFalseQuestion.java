@@ -21,7 +21,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
     public void createQuestion(Scanner sc) {
         System.out.println("Enter the prompt for your True/False question:");
         String prompt = sc.nextLine().trim();
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
 
         List<String> tfOptions = Arrays.asList("True", "False");
         setOptions(tfOptions);

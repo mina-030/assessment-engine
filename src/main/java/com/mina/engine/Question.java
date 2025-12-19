@@ -13,12 +13,11 @@ public abstract class Question implements Serializable {
     protected boolean allowsMultiple;
     protected int expectedResponseCount;
     private List<Response> responses;
-
     protected List<String> answerKey = new ArrayList<>();
 
     //    Constructor
-    public Question(String qPrompt, boolean allowsMultiple, int expectedAnswerCount, List<Response> responses) {
-        this.qPrompt = qPrompt;
+    public Question(String questionPrompt, boolean allowsMultiple, int expectedAnswerCount, List<Response> responses) {
+        this.qPrompt = questionPrompt;
         this.allowsMultiple = allowsMultiple;
         this.expectedResponseCount = expectedAnswerCount;
         this.responses = (responses != null) ? responses : new ArrayList<>();
@@ -42,9 +41,13 @@ public abstract class Question implements Serializable {
         return responses;
     }
 
+    public List<String> getAnswer() {
+        return answerKey;
+    }
+
     //    Setter
-    public void setqPrompt(String qPrompt) {
-        this.qPrompt = qPrompt;
+    public void setQuestionPrompt(String questionPrompt) {
+        this.qPrompt = questionPrompt;
     }
 
     public void setAllowsMultiple(boolean allowsMultiple) {
@@ -61,6 +64,10 @@ public abstract class Question implements Serializable {
         } else {
             this.responses = new ArrayList<>();
         }
+    }
+
+    public void setAnswer(List<String> answerKey) {
+        this.answerKey = answerKey;
     }
 
     //    Add Response Method
@@ -88,7 +95,7 @@ public abstract class Question implements Serializable {
                     Output.printErrorInvalidInputString();
                     continue;
                 }
-                setqPrompt(prompt);
+                setQuestionPrompt(prompt);
                 break;
             }
         }
@@ -133,6 +140,8 @@ public abstract class Question implements Serializable {
     public abstract String tabulateQuestion();
 
     // --------------------------- For test---------------------------------
+    // needed to be fixed and delete later
+    // have an interface already doing it
     public void setAnswerKey(List<String> answerKey) {
         this.answerKey = answerKey;
     }

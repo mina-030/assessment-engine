@@ -55,7 +55,7 @@ public class MultipleChoiceQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "Multiple Choice");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
 
         int choiceNum;
         while (true) {

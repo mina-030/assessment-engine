@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ShortAnswerQuestion extends EssayQuestion {
+public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
     private int maxWord;
+    private static final String SA_QUESTION_TYPE = "Short Answer";
 
     public ShortAnswerQuestion(
             String questionPrompt,
@@ -41,8 +42,8 @@ public class ShortAnswerQuestion extends EssayQuestion {
     @Override
     public void createQuestion(Scanner sc) {
         // create prompt
-        String prompt = Input.readPromptUntilValid(sc, "Short Answer");
-        setqPrompt(prompt);
+        String prompt = Input.readPromptUntilValid(sc, SA_QUESTION_TYPE);
+        setQuestionPrompt(prompt);
 
         // ask the maximum words of the question
         while (true) {
@@ -125,33 +126,12 @@ public class ShortAnswerQuestion extends EssayQuestion {
         return tabulateOneOption();
     }
 
-    // set answer ket method
-    public void setQuestionAnswer(Scanner sc) {
-        Output.printAnswerQuestion("Matching");
-        List<String> key = new ArrayList<>();
-
-        for (int i = 0; i < getExpectedResponseCount(); i++) {
-            while (true) {
-                System.out.println("Enter your " + (i + 1) + " answer: ");
-                String input = sc.nextLine().trim();
-
-                // check if the user's input is empty
-                if (!Input.validator(input)) {
-                    Output.printErrorEmptyInput();
-                    continue;
-                }
-
-                // check if the user's input is valid
-                if (!validateResponse(input)) {
-                    Output.printErrorInvalidInputString();
-                    continue;
-                }
-                // valid - now store it
-                key.add(input);
-                break;
-            }
-        }
-        super.setAnswerKey(key);
+    // set answer key method
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, SA_QUESTION_TYPE);
+        List<String> key = collectionAnswer(sc, answerNum, SA_QUESTION_TYPE, this);
+        super.setAnswer(key);
     }
 
     // grading method

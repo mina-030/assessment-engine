@@ -22,7 +22,7 @@ public class EssayQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "Essay");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
     }

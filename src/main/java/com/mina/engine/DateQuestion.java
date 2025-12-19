@@ -74,7 +74,7 @@ public class DateQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "Date");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
     }

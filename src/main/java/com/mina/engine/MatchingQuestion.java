@@ -84,7 +84,7 @@ public class MatchingQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "matching");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
 
         int choiceNum;
         System.out.println("Enter the number of matching choices for your Matching question(options for one side):");
