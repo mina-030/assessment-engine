@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+    - "master"
+    - "refactor-medium"
   pull_request:
-    branches: [ "master" ]
+    branches:     
+      - "master"
+      - "refactor-medium"
 
 jobs:
   build-test:
