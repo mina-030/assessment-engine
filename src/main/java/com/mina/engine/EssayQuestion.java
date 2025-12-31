@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.io.Serial;
 
-public class EssayQuestion extends Question {
+public class EssayQuestion extends Question{
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -86,10 +86,5 @@ public class EssayQuestion extends Question {
             sb.append(r.getAnswers().getFirst()).append("\n\n");
         }
         return sb.toString();
-    }
-
-    // set Question with answer method
-    public void setQuestionAnswer(Scanner sc) {
-        setAnswerKey(null);
     }
 }

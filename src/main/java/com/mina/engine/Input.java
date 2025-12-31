@@ -54,7 +54,7 @@ public class Input {
             Output.printErrorEmptyInput();
             return false;
         }
-        if (response.length() != 1) {
+        if (response.length() != 2) {
             System.out.println("Invalid response length. Please try again.");
             return false;
         }
@@ -67,35 +67,40 @@ public class Input {
 
 
     // check if the first character within the response's size
-    public static boolean checkMatchingResponseChar(String response, int responseSize) {
+    public static boolean checkMatchingResponseChar(String response, int choiceSize) {
         char responseChar = response.charAt(0);
         int index = responseChar - 'A';
-        return index >= 0 && index < responseSize;
+        return index >= 0 && index < choiceSize;
 
     }
 
     // check if the second number within the response's size
-    public static boolean checkMatchingResponseInt(String response, int responseSize) {
+    public static boolean checkMatchingResponseInt(String response, int choiceSize) {
         int responseInt = Integer.parseInt(String.valueOf(response.charAt(1)));
-        return responseInt >= 0 && responseInt <= responseSize;
+        return responseInt > 0 && responseInt <= choiceSize;
     }
 
     // integrate all the methods for checking the format of response of multiple choice question
-    public static boolean checkMatchingResponse(String response, int responseSize) {
+    public static boolean checkMatchingResponse(String response, int choiceSize) {
         return (checkAnswerFormatOfMatching(response)
-                && checkMatchingResponseChar(response, responseSize)
-                && checkMatchingResponseInt(response, responseSize));
+                && checkMatchingResponseChar(response, choiceSize)
+                && checkMatchingResponseInt(response, choiceSize));
     }
 
     // check multiple choice format
-    public static boolean checkMultiResponse(String response, int responseSize) {
+    public static boolean checkMultiResponse(String response, int choiceSize) {
         if (!validator(response) || response.length() != 1) {
             return false;
         }
 
         char c = response.toUpperCase().charAt(0);
         int index = c - 'A';
-        return index >= 0 && index < responseSize;
+        return index >= 0 && index < choiceSize;
+    }
+
+    // check short answer word length
+    public static boolean checkShortAnswerWordLength(int maxWordLength, String input) {
+        return input.trim().split("\\s+").length <= maxWordLength;
     }
 
     // check if the date format is valid(YYYY/MM/DD)
@@ -128,6 +133,5 @@ public class Input {
         Output.printErrorInvalidInputFormat("MM/DD/YYYY");
         return false;
     }
-
 
 }

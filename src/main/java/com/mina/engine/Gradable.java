@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public interface Gradable {
     void setAnswerKeyFromInput(Scanner sc);
+    boolean checkAnswer(Response response);
 
     default int getAnswerNum(Scanner sc, String questionType) {
         while (true) {
@@ -29,7 +30,7 @@ public interface Gradable {
             Scanner sc,
             int answerNum,
             String questionType,
-            Question question
+            java.util.function.Predicate<String> validator
     ) {
         Output.printAnswerQuestion(questionType);
         List<String> answer = new ArrayList<>();
@@ -46,7 +47,7 @@ public interface Gradable {
                 }
 
                 // check if the user's input is valid
-                if (!question.validateResponse(input)) {
+                if (!validator.test(input)) {
                     Output.printErrorInvalidInputString();
                     continue;
                 }
@@ -56,5 +57,23 @@ public interface Gradable {
             }
         }
         return answer;
+    }
+
+    static boolean generalCheckAnswer(Response response, Question question) {
+        if (!Input.validator(String.valueOf(response))) {
+            return false;
+        }
+
+        // make a safe copy for checking the answer
+        List<String> tempKey = new ArrayList<>(question.answerKey);
+        for (String userAnswer : response.getAnswers()) {
+            userAnswer = userAnswer.toLowerCase();
+
+            if (!tempKey.contains(userAnswer)) {
+                return false;
+            }
+            tempKey.remove(userAnswer);
+        }
+        return tempKey.isEmpty();
     }
 }

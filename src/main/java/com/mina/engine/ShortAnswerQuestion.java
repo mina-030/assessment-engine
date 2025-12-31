@@ -130,27 +130,17 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
     @Override
     public void setAnswerKeyFromInput(Scanner sc) {
         int answerNum = getAnswerNum(sc, SA_QUESTION_TYPE);
-        List<String> key = collectionAnswer(sc, answerNum, SA_QUESTION_TYPE, this);
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                SA_QUESTION_TYPE,
+                input -> Input.checkShortAnswerWordLength(maxWord, input)
+                );
         super.setAnswer(key);
     }
 
     // grading method
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        // make a safe copy for checking the answer
-        List<String> tempKey = new ArrayList<>(answerKey);
-        for (String userAnswer : response.getAnswers()) {
-            userAnswer = userAnswer.toLowerCase();
-
-            if (!tempKey.contains(userAnswer)) {
-                return false;
-            }
-            tempKey.remove(userAnswer);
-        }
-        return tempKey.isEmpty();
+    public boolean checkAnswer(Response response) {
+        return Gradable.generalCheckAnswer(response, this);
     }
 }

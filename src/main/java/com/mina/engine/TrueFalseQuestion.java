@@ -108,8 +108,8 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
     //grading method override (for true and false we only have one response and one answer)
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
+    public boolean checkAnswer(Response response) {
+        if (!Input.validator(String.valueOf(response))) {
             return false;
         }
 
@@ -120,22 +120,12 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
     }
 
     // set Question with answer method
-    public void setQuestionAnswer(Scanner sc) {
-        answerKey.clear();
-
-        while (true) {
-            System.out.println("Enter the correct answer (True/False):");
-            String input = sc.nextLine().trim();
-
-            if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase("true")) {
-                answerKey.add("True");
-                break;
-            } else if (input.equalsIgnoreCase("f") || input.equalsIgnoreCase("false")) {
-                answerKey.add("False");
-                break;
-            } else {
-                System.out.println("Invalid input. Please enter T or F.");
-            }
-        }
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "True False");
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "True False",
+                Input::checkTrueFalse);
+        super.setAnswer(key);
     }
 }

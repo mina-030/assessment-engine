@@ -3,7 +3,7 @@ package com.mina.engine;
 import java.util.*;
 import java.io.Serial;
 
-public class MultipleChoiceQuestion extends Question {
+public class MultipleChoiceQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -44,13 +44,7 @@ public class MultipleChoiceQuestion extends Question {
         return Collections.unmodifiableList(options);
     }
 
-    //    Add options method
-    public void addOption(String option) {
-        options.add(option);
-    }
-
-//    inheritance override methods from superclass (Question)
-
+    // inheritance override methods from superclass (Question)
     // create question method
     @Override
     public void createQuestion(Scanner sc) {
@@ -256,53 +250,22 @@ public class MultipleChoiceQuestion extends Question {
 
 
     // set answer key method
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "Multiple Choice");
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "Multiple Choice",
+                input -> Input.checkMultiResponse(input, options.size()));
+        super.setAnswer(key);
+    }
+
+    // will delete later
+    @Override
     public void setQuestionAnswer(Scanner sc) {
-        Output.printAnswerQuestion("Multiple choice");
-        System.out.println("Enter the number of answers for your multiple-choice question:");
-        int answerNum = sc.nextInt();
-        List<String> key = new ArrayList<>();
-
-        for (int i = 0; i < answerNum; i++) {
-            while (true) {
-                System.out.println("Enter your answer " + (i + 1) + ": ");
-                String input = sc.nextLine().trim();
-
-                // check if the user's input is empty
-                if (!Input.validator(input)) {
-                    Output.printErrorEmptyInput();
-                    continue;
-                }
-
-                // check if the user's input is valid
-                if (!validateResponse(input)) {
-                    Output.printErrorInvalidInputString();
-                    continue;
-                }
-                // valid - now store it
-                key.add(input);
-                break;
-            }
-        }
-        super.setAnswerKey(key);
     }
 
     @Override
-    public boolean checkCorrect
-            (Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        // make a safe copy for checking the answer
-        List<String> tempKey = new ArrayList<>(answerKey);
-        for (String userAnswer : response.getAnswers()) {
-            userAnswer = userAnswer.toLowerCase();
-
-            if (!tempKey.contains(userAnswer)) {
-                return false;
-            }
-            tempKey.remove(userAnswer);
-        }
-        return tempKey.isEmpty();
+    public boolean checkAnswer(Response response) {
+        return Gradable.generalCheckAnswer(response, this);
     }
 }

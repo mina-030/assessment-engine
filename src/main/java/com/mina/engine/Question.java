@@ -142,10 +142,6 @@ public abstract class Question implements Serializable {
     // --------------------------- For test---------------------------------
     // needed to be fixed and delete later
     // have an interface already doing it
-    public void setAnswerKey(List<String> answerKey) {
-        this.answerKey = answerKey;
-    }
-
     public List<String> getAnswerKey() {
         return answerKey;
     }
@@ -162,11 +158,6 @@ public abstract class Question implements Serializable {
         return user.equalsIgnoreCase(correct);
     }
 
-    public abstract void setQuestionAnswer(Scanner sc);
+    public void setQuestionAnswer(Scanner sc) {}
 
-    // set question with answer for test
-    public void setQuestionWithAnswer(Scanner sc) {
-        createQuestion(sc);
-        setQuestionAnswer(sc);
-    }
 }

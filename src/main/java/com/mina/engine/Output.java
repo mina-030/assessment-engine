@@ -15,6 +15,10 @@ public final class Output {
     private static final String INVALID_INPUT_RANGE =
             "Input out of range. Please try again."
                     + "Number should be around: ";
+    private static final String INVALID_OVER_MAX_WORD_LENGTH =
+            "Over Max word length. Please try again."
+            + "Maximum word length: ";
+
     private static final String[] MENU_1_CHOOSE_SURVEY_TEST = {
             "",
             "1) Survey",
@@ -121,6 +125,10 @@ public final class Output {
 
     public static void printErrorOutOfRange(String range) {
         System.out.println(INVALID_INPUT_RANGE + range);
+    }
+
+    public static void printErrorOverMaxWordLength(int maxWordLength) {
+        System.out.println(INVALID_OVER_MAX_WORD_LENGTH + maxWordLength);
     }
 
     public static void showOptionsAlpha(int count, List<String> options) {

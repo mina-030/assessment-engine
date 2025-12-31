@@ -3,7 +3,7 @@ package com.mina.engine;
 import java.util.*;
 import java.io.Serial;
 
-public class DateQuestion extends Question {
+public class DateQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class DateQuestion extends Question {
             int month,
             int day
     ) {
-        this(questionPrompt, false, 1, new ArrayList<Response>(), year, month, day);
+        this(questionPrompt, false, 1, new ArrayList<>(), year, month, day);
     }
 
     //setter
@@ -48,26 +48,6 @@ public class DateQuestion extends Question {
 
     public void setDay(int day) {
         this.day = day;
-    }
-
-    //getter
-    public int getYear() {
-        return year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    //general setter
-    public void setValidDate(int year, int month, int day) {
-        setYear(year);
-        setMonth(month);
-        setDay(day);
     }
 
     // create question method
@@ -132,35 +112,20 @@ public class DateQuestion extends Question {
     }
 
     // ----------------- For Test -------------------------
-    public void setQuestionAnswer(Scanner sc) {
-        while (true) {
-            Output.printAnswerQuestion("Date");
-            String input = sc.nextLine().trim();
-
-            // check if the user's input is empty
-            if (!Input.validator(input)) {
-                Output.printErrorEmptyInput();
-                continue;
-            }
-
-            // check if the user's input is valid
-            if (!validateResponse(input)) {
-                Output.printErrorInvalidInputString();
-                continue;
-            }
-
-            // valid - now store it
-            List<String> key = new ArrayList<>();
-            key.add(input);
-            super.setAnswerKey(key);
-            break;
-        }
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "Date");
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "Date",
+                Input::checkValidDate);
+        super.setAnswer(key);
     }
 
     // check correct method for date question
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
+    public boolean checkAnswer(Response response) {
+        if (!Input.validator(String.valueOf(response))) {
             return false;
         }
 
