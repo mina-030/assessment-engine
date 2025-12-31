@@ -6,7 +6,7 @@ on:
     - "master"
     - "refactor-medium"
   pull_request:
-    branches:     
+    branches:
       - "master"
       - "refactor-medium"
 
