@@ -3,7 +3,7 @@ package com.mina.engine;
 import java.io.Serial;
 import java.util.*;
 
-public class TrueFalseQuestion extends MultipleChoiceQuestion {
+public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -22,12 +22,10 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
         System.out.println("Enter the prompt for your True/False question:");
         String prompt = sc.nextLine().trim();
         setQuestionPrompt(prompt);
-
-        List<String> tfOptions = Arrays.asList("True", "False");
-        setOptions(tfOptions);
+        setOptions(Arrays.asList("True", "False"));
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
-        setChoiceNum(tfOptions.size());
+        setChoiceNum(2);
     }
 
     //collect Answer method

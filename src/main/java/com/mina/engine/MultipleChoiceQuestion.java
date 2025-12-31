@@ -259,11 +259,6 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
         super.setAnswer(key);
     }
 
-    // will delete later
-    @Override
-    public void setQuestionAnswer(Scanner sc) {
-    }
-
     @Override
     public boolean checkAnswer(Response response) {
         return Gradable.generalCheckAnswer(response, this);

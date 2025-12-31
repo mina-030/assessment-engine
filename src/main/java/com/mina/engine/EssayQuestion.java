@@ -1,11 +1,12 @@
 package com.mina.engine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.Serial;
 
-public class EssayQuestion extends Question{
+public class EssayQuestion extends Question {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -86,5 +87,19 @@ public class EssayQuestion extends Question{
             sb.append(r.getAnswers().getFirst()).append("\n\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {
+        throw new UnsupportedOperationException(
+                "This question type is not automatically gradable"
+        );
+    }
+
+    @Override
+    public boolean checkAnswer(Response response) {
+        throw new UnsupportedOperationException(
+                "This question type is not automatically gradable"
+        );
     }
 }

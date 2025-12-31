@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.*;
 
 
-public abstract class Question implements Serializable {
+public abstract class Question implements Serializable, Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -138,26 +138,4 @@ public abstract class Question implements Serializable {
     public abstract String modifyQuestion(Scanner sc);
 
     public abstract String tabulateQuestion();
-
-    // --------------------------- For test---------------------------------
-    // needed to be fixed and delete later
-    // have an interface already doing it
-    public List<String> getAnswerKey() {
-        return answerKey;
-    }
-
-    // checkCorrect method
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        String user = response.getAnswers().getFirst();
-        String correct = answerKey.getFirst();
-
-        return user.equalsIgnoreCase(correct);
-    }
-
-    public void setQuestionAnswer(Scanner sc) {}
-
 }

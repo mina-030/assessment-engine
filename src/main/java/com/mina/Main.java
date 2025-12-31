@@ -137,32 +137,32 @@ public class Main {
                 switch (choice) {
                     case 1 -> {
                         Question q = Survey.createTrueFalse(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 2 -> {
                         Question q = Survey.createMultipleChoice(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 3 -> {
                         Question q = Survey.createShortAnswer(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 4 -> {
                         Question q = Survey.createEssay(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 5 -> {
                         Question q = Survey.createDate(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 6 -> {
                         Question q = Survey.createMatching(sc);
-                        q.setQuestionAnswer(sc);
+                        q.setAnswerKeyFromInput(sc);
                         test.getQuestions().add(q);
                     }
                     case 7 -> {

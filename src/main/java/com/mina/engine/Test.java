@@ -64,7 +64,7 @@ public class Test extends Survey {
                     .append(q.displayQuestion())
                     .append("\n");
 
-            List<String> key = q.getAnswerKey();
+            List<String> key = correctAnswer;
             if (key != null && !key.isEmpty()) {
                 sb.append("Answer: ").append(String.join(", ", key));
             } else {
@@ -83,11 +83,11 @@ public class Test extends Survey {
             Question q = questions.get(i);
             Response r = responses.get(i);
 
-            if (q instanceof EssayQuestion) {
+            if (!(q instanceof Gradable)) {
                 continue;
             }
 
-            if (q.checkCorrect(r)) {
+            if (((Gradable) q).checkAnswer(r)) {
                 correct++;
             }
         }
