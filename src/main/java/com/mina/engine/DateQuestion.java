@@ -61,8 +61,8 @@ public class DateQuestion extends Question implements Gradable {
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return Input.checkValidDate(answer);
+    protected boolean validateResponse(String response) {
+        return Input.checkValidDate(response);
     }
 
     // collect answer method
@@ -101,8 +101,8 @@ public class DateQuestion extends Question implements Gradable {
 
     // modify question method
     @Override
-    public String modifyQuestion(Scanner sc) {
-        return modifyPrompt(sc);
+    public void modifyQuestion(Scanner sc) {
+        modifyPrompt(sc);
     }
 
     // tabulate question method

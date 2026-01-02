@@ -1,6 +1,5 @@
 package com.mina.engine;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -35,8 +34,8 @@ public class EssayQuestion extends Question {
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return Input.validator(answer);
+    protected boolean validateResponse(String response) {
+        return Input.validator(response);
     }
 
     // collect answer method
@@ -74,8 +73,8 @@ public class EssayQuestion extends Question {
 
     // modify question method
     @Override
-    public String modifyQuestion(Scanner sc) {
-        return modifyPrompt(sc);
+    public void modifyQuestion(Scanner sc) {
+        modifyPrompt(sc);
     }
 
     // tabulate question method

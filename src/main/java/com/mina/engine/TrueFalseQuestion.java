@@ -13,7 +13,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
         setOptions(Arrays.asList("True", "False"));
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
-        setChoiceNum(2);
+        setChoiceSize(2);
     }
 
     //create Question method
@@ -25,7 +25,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
         setOptions(Arrays.asList("True", "False"));
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
-        setChoiceNum(2);
+        setChoiceSize(2);
     }
 
     //collect Answer method
@@ -48,14 +48,14 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
 
     // validate Response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return Input.checkTrueFalse(answer);
+    protected boolean validateResponse(String response) {
+        return Input.checkTrueFalse(response);
     }
 
     // modify Question method
     @Override
-    public String modifyQuestion(Scanner sc) {
-        return modifyPrompt(sc);
+    public void modifyQuestion(Scanner sc) {
+        modifyPrompt(sc);
     }
 
     // tabulate Question method

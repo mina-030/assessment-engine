@@ -7,7 +7,7 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int choiceNum;
+    private int choiceSize;
     private List<String> options = new ArrayList<>();
 
     public MultipleChoiceQuestion(
@@ -15,10 +15,10 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
             boolean allowsMultiple,
             int expectedAnswerCount,
             List<Response> responses,
-            int choiceNum
+            int choiceSize
     ) {
         super(questionPrompt, allowsMultiple, expectedAnswerCount, responses);
-        this.choiceNum = choiceNum;
+        this.choiceSize = choiceSize;
     }
 
     //    convenience constructor
@@ -27,8 +27,8 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
     }
 
     //    setter
-    public void setChoiceNum(int choiceNum) {
-        this.choiceNum = choiceNum;
+    public void setChoiceSize(int choiceSize) {
+        this.choiceSize = choiceSize;
     }
 
     public void setOptions(List<String> options) {
@@ -36,8 +36,8 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
     }
 
     //    getter
-    public int getChoiceNum() {
-        return choiceNum;
+    public int getChoiceSize() {
+        return choiceSize;
     }
 
     public List<String> getOptions() {
@@ -64,10 +64,10 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
                 System.out.println("Please enter a valid number.");
             }
         }
-        setChoiceNum(choiceNum);
+        setChoiceSize(choiceNum);
 
         char letter = 'A';
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < getChoiceSize(); i++) {
             while (true) {
                 System.out.println("Enter choice #" + letter + ":");
                 String choice = sc.nextLine().trim();
@@ -111,7 +111,7 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
     }
 
     // modify question method
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         // modify prompt
         String message = modifyPrompt(sc);
         System.out.println(message);
@@ -148,25 +148,22 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
                 break;
             }
         }
-
-        return "Question updated successfully";
     }
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        if (answer == null || answer.trim().isEmpty()) {
-            System.out.println("Response cannot be empty.");
+    protected boolean validateResponse(String response) {
+        if (!Input.validator(response)) {
             return false;
         }
 
-        answer = answer.trim().toUpperCase();
-        if (answer.length() != 1) {
+        response = response.trim().toUpperCase();
+        if (response.length() != 1) {
             System.out.println("Please enter a single letter (A, B, C, etc.).");
             return false;
         }
 
-        char c = answer.charAt(0);
+        char c = response.charAt(0);
         if (c < 'A' || c >= ('A' + getOptions().size())) {
             System.out.println("Please enter a letter between A and " +
                     (char) ('A' + getOptions().size() - 1));
@@ -218,7 +215,7 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
 
 
         // initialize counts for A, B, C, D...
-        for (int i = 0; i < getChoiceNum(); i++) {
+        for (int i = 0; i < getChoiceSize(); i++) {
             String option = Character.toString((char) ('A' + i));
             count.put(option, 0);
         }

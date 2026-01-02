@@ -57,7 +57,7 @@ public final class Output {
 
     private static final String[] MENU_4_ADD_QUESTIONS = {
             "",
-            "1) Add a new T/F Survey",
+            "1) Add a new T/F question",
             "2) Add a new multiple-choice question",
             "3) Add a new short answer question",
             "4) Add a new essay question",

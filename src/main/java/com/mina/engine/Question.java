@@ -129,13 +129,13 @@ public abstract class Question implements Serializable, Gradable {
     // Abstract Methods for the subclass (can be modified) (display, modify, collectResponse, validateResponse)
     public abstract void createQuestion(Scanner sc);
 
-    protected abstract boolean validateResponse(String answer);
+    protected abstract boolean validateResponse(String response);
 
     public abstract Response collectResponse(Scanner sc);
 
     public abstract String displayQuestion();
 
-    public abstract String modifyQuestion(Scanner sc);
+    public abstract void modifyQuestion(Scanner sc);
 
     public abstract String tabulateQuestion();
 }

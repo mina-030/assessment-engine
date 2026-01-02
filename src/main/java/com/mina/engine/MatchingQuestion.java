@@ -86,15 +86,14 @@ public class MatchingQuestion extends Question implements Gradable{
         String prompt = Input.readPromptUntilValid(sc, "matching");
         setQuestionPrompt(prompt);
 
-        int choiceNum;
         System.out.println("Enter the number of matching choices for your Matching question(options for one side):");
-        choiceNum = Input.checkInt(sc, 1, 1000);
-        setChoiceSize(choiceNum);
-        setExpectedResponseCount(choiceNum);
+        int choiceSize = Input.checkInt(sc, 1, 1000);
+        setChoiceSize(choiceSize);
+        setExpectedResponseCount(choiceSize);
 
         String choice;
         char letter = 'A';
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < choiceSize; i++) {
             while (true) {
                 System.out.println("Enter left choice #" + letter + ":");
                 choice = sc.nextLine().trim();
@@ -111,7 +110,7 @@ public class MatchingQuestion extends Question implements Gradable{
             }
         }
 
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < choiceSize; i++) {
             while (true) {
                 System.out.println("Enter right choice #" + (i + 1) + ":");
                 choice = sc.nextLine().trim();
@@ -130,8 +129,8 @@ public class MatchingQuestion extends Question implements Gradable{
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return !Input.checkMatchingResponse(answer, choiceSize);
+    protected boolean validateResponse(String response) {
+        return !Input.checkMatchingResponse(response, choiceSize);
     }
 
     // collect answer method
@@ -229,7 +228,7 @@ public class MatchingQuestion extends Question implements Gradable{
     }
 
     // modify question method
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         // modify prompt
         String message = modifyPrompt(sc);
         System.out.println(message);
@@ -239,7 +238,7 @@ public class MatchingQuestion extends Question implements Gradable{
         String answer = sc.nextLine().trim();
 
         if (!answer.equalsIgnoreCase("yes")) {
-            return "No changes to choices.";
+            System.out.println("No changes to choices.");
         }
 
         int choicesCount = getChoiceSize();
@@ -252,8 +251,6 @@ public class MatchingQuestion extends Question implements Gradable{
         // Modify right choices
         System.out.println("--- Modify Right Choices ---");
         modifyChoiceList(sc, "right", rightOptions);
-
-        return "Modified successfully!";
     }
 
     // modify choice method

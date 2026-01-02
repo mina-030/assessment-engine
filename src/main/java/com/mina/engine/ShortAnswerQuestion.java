@@ -61,7 +61,7 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
         while (true) {
             System.out.println("Do you allow multiple answers? (yes/no)");
             String answer = sc.nextLine().trim().toLowerCase();
-            if (answer.equals("yes")) {
+            if (answer.equalsIgnoreCase("yes")) {
                 setAllowsMultiple(true);
 
                 while (true) {
@@ -91,7 +91,7 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
 
     // modify question method
     @Override
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         String message = modifyPrompt(sc);
         System.out.println(message);
 
@@ -116,8 +116,6 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
                 }
             }
         }
-
-        return "Short answer question modified successfully";
     }
 
     // tabulate question method

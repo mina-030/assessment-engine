@@ -7,8 +7,8 @@ public class Input {
     }
 
     // general validator method
-    public static boolean validator(String answer) {
-        return answer != null && !answer.trim().isEmpty();
+    public static boolean validator(String response) {
+        return response != null && !response.trim().isEmpty();
     }
 
     // check if prompt is valid
@@ -44,8 +44,8 @@ public class Input {
     }
 
     //check if valid response for true/false question
-    public static boolean checkTrueFalse(String answer) {
-        return validator(answer) && answer.equalsIgnoreCase("true") || answer.equalsIgnoreCase("false");
+    public static boolean checkTrueFalse(String response) {
+        return validator(response) && response.equalsIgnoreCase("true") || response.equalsIgnoreCase("false");
     }
 
     //check if the answer of multiple choice is in character + number format
@@ -104,14 +104,14 @@ public class Input {
     }
 
     // check if the date format is valid(YYYY/MM/DD)
-    public static boolean checkValidDate(String answer) {
-        if (!validator(answer)) {
+    public static boolean checkValidDate(String response) {
+        if (!validator(response)) {
             Output.printErrorEmptyInput();
             return false;
         }
 
-        String response = answer.trim();
-        String[] parts = response.split("/");
+        String i = response.trim();
+        String[] parts = i.split("/");
 
         if (parts.length != 3) {
             return false;
@@ -133,5 +133,4 @@ public class Input {
         Output.printErrorInvalidInputFormat("MM/DD/YYYY");
         return false;
     }
-
 }
