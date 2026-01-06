@@ -10,13 +10,15 @@ public class Survey implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    protected String title;
     protected List<Question> questions;
     protected List<Response> responses;
     protected List<String> tables;
     Scanner sc;
 
     // constructor
-    public Survey(List<Question> questions, List<Response> responses, List<String> tables) {
+    public Survey(String title, List<Question> questions, List<Response> responses, List<String> tables) {
+        this.title = title;
         this.questions = questions;
         this.responses = responses;
         this.tables = tables;
@@ -24,6 +26,7 @@ public class Survey implements Serializable {
 
     // simple constructor
     public Survey() {
+        this.title = "";
         this.questions = new ArrayList<Question>();
         this.responses = new ArrayList<Response>();
         this.tables = new ArrayList<String>();
@@ -42,6 +45,10 @@ public class Survey implements Serializable {
         return tables;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     // setter
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -53,6 +60,10 @@ public class Survey implements Serializable {
 
     public void setTables(List<String> tables) {
         this.tables = tables;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // display question method

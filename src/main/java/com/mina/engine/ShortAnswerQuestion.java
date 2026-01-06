@@ -79,7 +79,7 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
                     }
                 }
                 break;
-            } else if (answer.equals("no")) {
+            } else if (answer.equalsIgnoreCase("no")) {
                 setAllowsMultiple(false);
                 setExpectedResponseCount(1);
                 break;
@@ -116,6 +116,40 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
                 }
             }
         }
+    }
+
+    // collect response method
+    @Override
+    public Response collectResponse(Scanner sc) {
+        clearResponses();
+
+        int count = getExpectedResponseCount();
+        int maxWord = getMaxWord();
+        Response lastResponse = null;
+
+        for (int i = 0; i< count; i++) {
+            while (true) {
+                System.out.println("Enter your response:");
+                String response = sc.nextLine().trim();
+
+                if (!Input.validator(response)) {
+                    Output.printErrorEmptyInput();
+                    continue;
+                }
+
+                if (!Input.checkShortAnswerWordLength(maxWord, response)) {
+                    Output.printErrorOverMaxWordLength(maxWord);
+                    continue;
+                }
+
+                Response r = new Response(response);
+                addResponse(r);
+                lastResponse = r;
+
+                break;
+            }
+        }
+        return lastResponse;
     }
 
     // tabulate question method

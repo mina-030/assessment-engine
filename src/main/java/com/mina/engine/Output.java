@@ -7,7 +7,7 @@ public final class Output {
             "Invalid input. Please try again.";
     private static final String INVALID_INPUT_INT =
             "Invalid number. Please try again.";
-    private static final String INVALID_ENTRY_INPUT =
+    private static final String INVALID_EMPTY_INPUT =
             "Input cannot be empty. Please try again.";
     private static final String INVALID_INPUT_FORMAT =
             "Invalid input format. Please try again."
@@ -95,14 +95,6 @@ public final class Output {
         }
     }
 
-    private static void printMessage(String message) {
-        System.out.println(message);
-    }
-
-    public static void printPrompt(String s) {
-        System.out.println(s);
-    }
-
     public static void printError(String s) {
         System.out.println("Error: " + s);
     }
@@ -116,7 +108,7 @@ public final class Output {
     }
 
     public static void printErrorEmptyInput() {
-        System.out.println(INVALID_ENTRY_INPUT);
+        System.out.println(INVALID_EMPTY_INPUT);
     }
 
     public static void printErrorInvalidInputFormat(String inputFormat) {
@@ -129,12 +121,6 @@ public final class Output {
 
     public static void printErrorOverMaxWordLength(int maxWordLength) {
         System.out.println(INVALID_OVER_MAX_WORD_LENGTH + maxWordLength);
-    }
-
-    public static void showOptionsAlpha(int count, List<String> options) {
-        for (int i = 0; i < count; i++) {
-            System.out.println("\t" + (char) ('A' + i) + ") " + options.get(i));
-        }
     }
 
     public static void showOptionsInt(int count, List<String> options) {

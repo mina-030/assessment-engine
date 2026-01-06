@@ -51,7 +51,8 @@ public class EssayQuestion extends Question {
                 System.out.println("Enter your response:");
                 String response = sc.nextLine().trim();
 
-                if (!Input.validator(response)) {
+                if (!validateResponse(response)) {
+                    Output.printErrorEmptyInput();
                     continue;
                 }
 
