@@ -7,6 +7,9 @@ target/
 *.iws
 *.ipr
 
+# Generated runtime data
+storage/
+
 # Eclipse
 .apt_generated
 .classpath

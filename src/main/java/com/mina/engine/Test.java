@@ -9,13 +9,14 @@ public class Test extends Survey {
     @Serial
     private static final long serialVersionUID = 1L;
 
-
+    private String title;
     private List<String> correctAnswer;
     private int score;
     Scanner sc;
 
     //constructor
-    public Test(List<Question> questions, List<Response> responses, List<String> correctAnswer, int score) {
+    public Test(String title, List<Question> questions, List<Response> responses, List<String> correctAnswer, int score) {
+        this.title = title;
         this.questions = questions;
         this.responses = responses;
         this.correctAnswer = correctAnswer;
@@ -24,6 +25,7 @@ public class Test extends Survey {
 
     // simple constructor
     public Test() {
+        this.title = "";
         this.questions = new ArrayList<Question>();
         this.responses = new ArrayList<Response>();
         this.correctAnswer = new ArrayList<String>();
@@ -39,6 +41,10 @@ public class Test extends Survey {
         this.score = score;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     // getter
     public List<String> getCorrectAnswer() {
         return correctAnswer;
@@ -46,6 +52,10 @@ public class Test extends Survey {
 
     public int getScore() {
         return score;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     // display a test without correct answers

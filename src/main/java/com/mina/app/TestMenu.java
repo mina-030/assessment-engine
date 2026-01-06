@@ -158,8 +158,8 @@ public class TestMenu {
     }
 
     // test menu: option 5 -save test
-    public static void saveTest(Scanner sc, Test current) {
-        if (current == null || current.getQuestions().isEmpty()) {
+    public static void saveTest(Scanner sc, Test test) {
+        if (test == null || test.getQuestions().isEmpty()) {
             System.out.println("You must have a test loaded in order to save it.");
             return;
         }
@@ -171,14 +171,13 @@ public class TestMenu {
             return;
         }
 
-        String safeName = testName.trim().replaceAll("\\s+", "_");
-
-        Path filePath = TEST_DEFIN_DIR.resolve(safeName + ".ser");
+        String filename = TEST_DEFIN_DIR + File.separator + testName + ".ser";
+        test.setTitle(testName);
 
         try (ObjectOutputStream oos =
-                     new ObjectOutputStream(new FileOutputStream(filePath.toFile()))) {
-            oos.writeObject(current);
-            System.out.println("Test saved successfully as: " + safeName);
+                     new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(test);
+            System.out.println("Test saved successfully as: " + testName);
         } catch (IOException e) {
             System.out.println("Error saving test: " + e.getMessage());
         }
