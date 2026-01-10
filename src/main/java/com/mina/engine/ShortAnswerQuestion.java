@@ -40,6 +40,11 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
     }
 
     @Override
+    public String displayQuestion() {
+        return displayPrompt() + " (Max Words: " + maxWord + ")";
+    }
+
+    @Override
     public void createQuestion(Scanner sc) {
         // create prompt
         String prompt = Input.readPromptUntilValid(sc, SA_QUESTION_TYPE);
