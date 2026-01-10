@@ -86,7 +86,7 @@ public class MatchingQuestion extends Question implements Gradable{
         String prompt = Input.readPromptUntilValid(sc, "matching");
         setQuestionPrompt(prompt);
 
-        System.out.println("Enter the number of matching choices for your Matching question(options for one side):");
+        System.out.println("Enter the number of choices for your Matching question(options for one side):");
         int choiceSize = Input.checkInt(sc, 1, 1000);
         setChoiceSize(choiceSize);
         setExpectedResponseCount(choiceSize);
@@ -130,7 +130,7 @@ public class MatchingQuestion extends Question implements Gradable{
     // validate response method
     @Override
     protected boolean validateResponse(String response) {
-        return !Input.checkMatchingResponse(response, choiceSize);
+        return Input.checkMatchingResponse(response, getChoiceSize());
     }
 
     // collect answer method
@@ -157,7 +157,6 @@ public class MatchingQuestion extends Question implements Gradable{
                 String cleanResponse = response.replaceAll("\\s+", "").toUpperCase();
 
                 if (!validateResponse(cleanResponse)) {
-                    Output.printErrorInvalidInputFormat("A1, B1, C3");
                     System.out.println("Available left choices: A-" + (char) ('A' + getChoiceSize() - 1));
                     System.out.println("Available right choices: 1-" + getChoiceSize());
                     continue;
@@ -246,16 +245,20 @@ public class MatchingQuestion extends Question implements Gradable{
 
         // Modify left choices
         System.out.println("--- Modify Left Choices ---");
+        Output.showOptionsInt(getChoiceSize(), getAllLeftOptions());
         modifyChoiceList(sc, "left", leftOptions);
 
         // Modify right choices
         System.out.println("--- Modify Right Choices ---");
+        Output.showOptionsInt(getChoiceSize(), getAllRightOptions());
         modifyChoiceList(sc, "right", rightOptions);
     }
 
     // modify choice method
     private void modifyChoiceList(Scanner sc, String side, List<String> options) {
         while (true) {
+
+
             System.out.println(
                     "Select the " + side
                             + " option to modify (1-" + options.size()
@@ -292,9 +295,19 @@ public class MatchingQuestion extends Question implements Gradable{
                 setRightOptions(index, newOption);
             }
 
-            System.out.println("Option updated successfully!");
+            System.out.println("Option updated successfully!\n");
+
             int choicesCount = getChoiceSize();
+            System.out.println("--- Updated Choice ---");
             Output.showMatchPairs(choicesCount, getAllLeftOptions(), getAllRightOptions()); // Show updated view
+
+            if (side.equals("left")) {
+                System.out.println("--- Modify Left Choices ---");
+                Output.showOptionsInt(getChoiceSize(), getAllLeftOptions());
+            } else {
+                System.out.println("--- Modify Right Choices ---");
+                Output.showOptionsInt(getChoiceSize(), getAllRightOptions());
+            }
         }
     }
 
@@ -346,10 +359,10 @@ public class MatchingQuestion extends Question implements Gradable{
     // set answer key method
     @Override
     public void setAnswerKeyFromInput(Scanner sc) {
-        int answerNum = getAnswerNum(sc, "Matching (e.g. A1, B2, C3)");
+        int answerNum = getAnswerNum(sc, "Matching", getExpectedResponseCount());
         List<String> key = collectionAnswer(
                 sc,answerNum,
-                "Matching (e.g. A1, B2, C3)",
+                "Matching",
                 Input::checkAnswerFormatOfMatching);
         super.setAnswer(key);
     }

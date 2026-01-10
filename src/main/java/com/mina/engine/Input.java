@@ -82,9 +82,14 @@ public class Input {
 
     // integrate all the methods for checking the format of response of multiple choice question
     public static boolean checkMatchingResponse(String response, int choiceSize) {
-        return (checkAnswerFormatOfMatching(response)
-                && checkMatchingResponseChar(response, choiceSize)
-                && checkMatchingResponseInt(response, choiceSize));
+        if (!checkAnswerFormatOfMatching(response)) {
+            return false;
+        } else if (!checkMatchingResponseChar(response, choiceSize)) {
+            return false;
+        } else if (!checkMatchingResponseInt(response, choiceSize)) {
+            return false;
+        }
+        return true;
     }
 
     // check multiple choice format

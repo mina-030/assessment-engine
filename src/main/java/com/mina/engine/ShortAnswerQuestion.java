@@ -161,7 +161,7 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
     // set answer key method
     @Override
     public void setAnswerKeyFromInput(Scanner sc) {
-        int answerNum = getAnswerNum(sc, SA_QUESTION_TYPE);
+        int answerNum = getAnswerNum(sc, SA_QUESTION_TYPE, getExpectedResponseCount());
         List<String> key = collectionAnswer(
                 sc, answerNum,
                 SA_QUESTION_TYPE,

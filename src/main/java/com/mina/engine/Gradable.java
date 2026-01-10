@@ -6,24 +6,28 @@ import java.util.Scanner;
 
 public interface Gradable {
     void setAnswerKeyFromInput(Scanner sc);
+
     boolean checkAnswer(Response response);
 
-    default int getAnswerNum(Scanner sc, String questionType) {
-        while (true) {
-            System.out.println("Enter the number of answers for your " + questionType + " question: ");
-            String line = sc.nextLine();
+    default int getAnswerNum(Scanner sc, String questionType, int expectedResponseCount) {
+        if (expectedResponseCount > 1) {
+            while (true) {
+                System.out.println("Enter the number of answers for your " + questionType + " question: ");
+                String line = sc.nextLine();
 
-            try {
-                int n = Integer.parseInt(line);
-                if (n <= 0) {
-                    Output.printErrorInvalidInputInt();
-                    continue;
+                try {
+                    int n = Integer.parseInt(line);
+                    if (n <= 0) {
+                        Output.printErrorInvalidInputInt();
+                        continue;
+                    }
+                    return n;
+                } catch (NumberFormatException e) {
+                    Output.printError(e.getMessage());
                 }
-                return n;
-            } catch (NumberFormatException e) {
-                Output.printError(e.getMessage());
             }
         }
+        return 1;
     }
 
     default List<String> collectionAnswer(

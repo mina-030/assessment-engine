@@ -45,6 +45,29 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
     }
 
     // inheritance override methods from superclass (Question)
+    // validate response method
+    @Override
+    protected boolean validateResponse(String response) {
+        if (!Input.validator(response)) {
+            return false;
+        }
+
+        response = response.trim().toUpperCase();
+        if (response.length() != 1) {
+            System.out.println("Please enter a single letter (A, B, C, etc.).");
+            return false;
+        }
+
+        char c = response.charAt(0);
+        if (c < 'A' || c >= ('A' + getOptions().size())) {
+            System.out.println("Please enter a letter between A and " +
+                    (char) ('A' + getOptions().size() - 1));
+            return false;
+        }
+
+        return true;
+    }
+
     // create question method
     @Override
     public void createQuestion(Scanner sc) {
@@ -150,29 +173,6 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
         }
     }
 
-    // validate response method
-    @Override
-    protected boolean validateResponse(String response) {
-        if (!Input.validator(response)) {
-            return false;
-        }
-
-        response = response.trim().toUpperCase();
-        if (response.length() != 1) {
-            System.out.println("Please enter a single letter (A, B, C, etc.).");
-            return false;
-        }
-
-        char c = response.charAt(0);
-        if (c < 'A' || c >= ('A' + getOptions().size())) {
-            System.out.println("Please enter a letter between A and " +
-                    (char) ('A' + getOptions().size() - 1));
-            return false;
-        }
-
-        return true;
-    }
-
     // collect answer method
     @Override
     public Response collectResponse(Scanner sc) {
@@ -248,7 +248,7 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
 
     // set answer key method
     public void setAnswerKeyFromInput(Scanner sc) {
-        int answerNum = getAnswerNum(sc, "Multiple Choice");
+        int answerNum = getAnswerNum(sc, "Multiple Choice", getExpectedResponseCount());
         List<String> key = collectionAnswer(
                 sc, answerNum,
                 "Multiple Choice",

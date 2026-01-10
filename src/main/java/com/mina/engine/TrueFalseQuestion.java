@@ -119,7 +119,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
 
     // set Question with answer method
     public void setAnswerKeyFromInput(Scanner sc) {
-        int answerNum = getAnswerNum(sc, "True False");
+        int answerNum = getAnswerNum(sc, "True False", getExpectedResponseCount());
         List<String> key = collectionAnswer(
                 sc, answerNum,
                 "True False",

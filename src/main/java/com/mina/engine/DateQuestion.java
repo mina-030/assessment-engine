@@ -114,7 +114,7 @@ public class DateQuestion extends Question implements Gradable {
     // ----------------- For Test -------------------------
     @Override
     public void setAnswerKeyFromInput(Scanner sc) {
-        int answerNum = getAnswerNum(sc, "Date");
+        int answerNum = getAnswerNum(sc, "Date", getExpectedResponseCount());
         List<String> key = collectionAnswer(
                 sc, answerNum,
                 "Date",
