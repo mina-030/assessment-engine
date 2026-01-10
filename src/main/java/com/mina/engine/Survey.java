@@ -92,25 +92,6 @@ public class Survey implements Serializable {
         return sb.toString();
     }
 
-    //display Survey With Response method
-    public String displaySurveyWithResponse() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < questions.size(); i++) {
-            sb.append(i + 1)
-                    .append(". ")
-                    .append(questions.get(i).displayQuestion())
-                    .append("\n");
-
-            if (i < responses.size()) {
-                sb.append("Response: ")
-                        .append(responses.get(i).display())
-                        .append("\n");
-            }
-        }
-
-        return sb.toString();
-    }
-
     // modify method
     public boolean modify(int index) {
         if (index < 0 || index >= questions.size()) {
@@ -144,24 +125,6 @@ public class Survey implements Serializable {
             sb.append(question.tabulateQuestion()).append("\n");
         }
         return sb.toString();
-    }
-
-    // retrieve question method
-    public Question retrieveQuestion(int index) {
-        if (index < 0 || index >= questions.size()) {
-            System.out.println("Invalid question number.");
-            return null;
-        }
-        return questions.get(index);
-    }
-
-    // retrieve responses method
-    public Response retrieveResponse(int index) {
-        if (index < 0 || index >= responses.size()) {
-            System.out.println("Invalid response number.");
-            return null;
-        }
-        return responses.get(index);
     }
 
     //create true false question method

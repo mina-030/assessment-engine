@@ -46,18 +46,4 @@ public class Response implements Serializable {
 
         return String.join(", ", response);
     }
-
-    public void saveResponse(String input) {
-        addResponse(input);
-    }
-
-    public void loadResponse(List<String> savedResponse) {
-        this.response = savedResponse;
-    }
-
-    public void modifyResponse(int index, String input) {
-        if (index >= 0 && index < response.size()) {
-            response.set(index, input);
-        }
-    }
 }

@@ -6,6 +6,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 public class TestMenu {
@@ -62,7 +65,7 @@ public class TestMenu {
                         if (test == null || test.getQuestions().isEmpty()) {
                             System.out.println("You must have a test loaded in order to tabulate it.");
                         } else {
-                            tabulateCurrentSession(test);
+                            tabulateAllStoredResponses(test);
                         }
                     }
                     case 9 -> gradeCurrentTest(test);
@@ -262,20 +265,78 @@ public class TestMenu {
         System.out.println("Question modified.");
     }
 
-    private static void tabulateCurrentSession(Test test) {
+    private static void tabulateAllStoredResponses(Test test) {
+        if (test == null || test.getQuestions() == null || test.getQuestions().isEmpty()) {
+            System.out.println("You must have a test loaded in order to tabulate it.");
+            return;
+        }
+
         // Clear any previously loaded responses from questions
         for (Question q : test.getQuestions()) {
             q.getUserResponse().clear();
         }
 
-        // Only use responses from the current session
-        if (test.getResponses() != null && !test.getResponses().isEmpty()) {
-            for (int i = 0; i < test.getQuestions().size() && i < test.getResponses().size(); i++) {
-                test.getQuestions().get(i).addResponse(test.getResponses().get(i));
+        String testName = test.getTitle()
+                .trim()
+                .replaceAll("\\s+", "_");
+
+        Path testRespFolder = TEST_RESP_DIR.resolve(testName);
+
+        if (!Files.exists(testRespFolder) || !Files.isDirectory(testRespFolder)) {
+            System.out.println("No saved responses found for: " + test.getTitle());
+            return;
+        }
+
+        File[] responseFiles = testRespFolder.toFile().listFiles(
+                (dir, name) -> name.endsWith(".ser")
+        );
+
+        if (responseFiles == null || responseFiles.length == 0) {
+            System.out.println("No saved responses found for: " + test.getTitle());
+            return;
+        }
+
+        // Sort attempts by filename so attempt_0001, attempt_0002, ... are in order
+        Arrays.sort(responseFiles, Comparator.comparing(File::getName));
+
+        int attemptCountLoaded = 0;
+
+        for (File f : responseFiles) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+                Object obj = ois.readObject();
+
+                if (!(obj instanceof List<?>)) {
+                    System.out.println("Skipping invalid response file: " + f.getName());
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                List<Response> attemptResponses = (List<Response>) obj;
+
+                // Merge attempt responses into question response lists
+                int limit = Math.min(test.getQuestions().size(), attemptResponses.size());
+                for (int i = 0; i < limit; i++) {
+                    Response r = attemptResponses.get(i);
+                    if (r != null) {
+                        test.getQuestions().get(i).addResponse(r);
+                    }
+                }
+
+                attemptCountLoaded++;
+
+            } catch (Exception e) {
+                System.out.println("Failed to read " + f.getName() + ": " + e.getMessage());
             }
         }
 
-        System.out.println("\n=== Tabulation Results ===");
+        if (attemptCountLoaded == 0) {
+            System.out.println("No valid response attempts could be loaded.");
+            return;
+        }
+
+        System.out.println("\n=== Tabulation Results (All Attempts) ===");
+        System.out.println("Test: " + test.getTitle());
+        System.out.println("Attempts loaded: " + attemptCountLoaded);
         System.out.print(test.tabulateSurvey());
     }
 

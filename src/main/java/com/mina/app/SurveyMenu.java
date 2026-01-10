@@ -39,7 +39,7 @@ public class SurveyMenu {
                         if (survey == null || survey.getQuestions().isEmpty()) {
                             System.out.println("You must have a survey loaded in order to tabulate it.");
                         } else {
-                            tabulateCurrentSession(sc, survey);
+                            tabulateAllStoredResponses(survey);
                         }
                     }
                     case 8 -> {return survey;}
@@ -233,20 +233,78 @@ public class SurveyMenu {
         }
     }
 
-    private static void tabulateCurrentSession(Scanner sc, Survey current) {
+    private static void tabulateAllStoredResponses(Survey survey) {
+        if (survey == null || survey.getQuestions() == null || survey.getQuestions().isEmpty()) {
+            System.out.println("You must have a survey loaded in order to tabulate it.");
+            return;
+        }
+
         // Clear any previously loaded responses from questions
-        for (Question q : current.getQuestions()) {
+        for (Question q : survey.getQuestions()) {
             q.getUserResponse().clear();
         }
 
-        // Only use responses from the current session
-        if (current.getResponses() != null && !current.getResponses().isEmpty()) {
-            for (int i = 0; i < current.getQuestions().size() && i < current.getResponses().size(); i++) {
-                current.getQuestions().get(i).addResponse(current.getResponses().get(i));
+        String surveyName = survey.getTitle()
+                .trim()
+                .replaceAll("\\s+", "_");
+
+        Path surveyRespFolder = SURVEY_RESP_DIR.resolve(surveyName);
+
+        if (!Files.exists(surveyRespFolder) || !Files.isDirectory(surveyRespFolder)) {
+            System.out.println("No saved responses found for: " + survey.getTitle());
+            return;
+        }
+
+        File[] responseFiles = surveyRespFolder.toFile().listFiles(
+                (dir, name) -> name.endsWith(".ser")
+        );
+
+        if (responseFiles == null || responseFiles.length == 0) {
+            System.out.println("No saved responses found for: " + survey.getTitle());
+            return;
+        }
+
+        // Sort attempts by filename so attempt_0001, attempt_0002, ... are in order
+        java.util.Arrays.sort(responseFiles, java.util.Comparator.comparing(File::getName));
+
+        int attemptCountLoaded = 0;
+
+        for (File f : responseFiles) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+                Object obj = ois.readObject();
+
+                if (!(obj instanceof java.util.List<?>)) {
+                    System.out.println("Skipping invalid response file: " + f.getName());
+                    continue;
+                }
+
+                @SuppressWarnings("unchecked")
+                java.util.List<Response> attemptResponses = (java.util.List<Response>) obj;
+
+                // Merge attempt responses into question response lists
+                int limit = Math.min(survey.getQuestions().size(), attemptResponses.size());
+                for (int i = 0; i < limit; i++) {
+                    Response r = attemptResponses.get(i);
+                    if (r != null) {
+                        survey.getQuestions().get(i).addResponse(r);
+                    }
+                }
+
+                attemptCountLoaded++;
+
+            } catch (Exception e) {
+                System.out.println("Failed to read " + f.getName() + ": " + e.getMessage());
             }
         }
 
-        System.out.println("\n=== Tabulation Results ===");
-        System.out.print(current.tabulateSurvey());
+        if (attemptCountLoaded == 0) {
+            System.out.println("No valid response attempts could be loaded.");
+            return;
+        }
+
+        System.out.println("\n=== Tabulation Results (All Attempts) ===");
+        System.out.println("Survey: " + survey.getTitle());
+        System.out.println("Attempts loaded: " + attemptCountLoaded);
+        System.out.print(survey.tabulateSurvey());
     }
 }
