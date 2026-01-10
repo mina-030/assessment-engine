@@ -200,7 +200,7 @@ public class MatchingQuestion extends Question implements Gradable{
         // Create and return the actual Response object
         Response responseObj = new Response();
         for (String pair : matchingPairs) {
-            responseObj.addAnswer(pair);
+            responseObj.addResponse(pair);
         }
         addResponse(responseObj);
 
