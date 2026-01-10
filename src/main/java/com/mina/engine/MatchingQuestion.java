@@ -333,7 +333,7 @@ public class MatchingQuestion extends Question implements Gradable{
         for (Response r : getUserResponse()) {
             // Build a string representation of this matching set
             List<String> sortedPairs = new ArrayList<>();
-            for (String pair : r.getAnswers()) {
+            for (String pair : r.getResponse()) {
                 sortedPairs.add(pair);
             }
             Collections.sort(sortedPairs);
@@ -370,11 +370,11 @@ public class MatchingQuestion extends Question implements Gradable{
     // checkCorrect method for matching class
     @Override
     public boolean checkAnswer(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
+        if (response == null || response.getResponse().isEmpty()) {
             return false;
         }
         List<String> user = new ArrayList<>();
-        for (String s : response.getAnswers()) {
+        for (String s : response.getResponse()) {
             user.add(s.replaceAll("\\s+", "").toUpperCase());
         }
 

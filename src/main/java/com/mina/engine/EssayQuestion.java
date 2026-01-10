@@ -84,7 +84,7 @@ public class EssayQuestion extends Question {
         StringBuilder sb = new StringBuilder();
 
         for (Response r : getUserResponse()) {
-            sb.append(r.getAnswers().getFirst()).append("\n\n");
+            sb.append(r.getResponse().getFirst()).append("\n\n");
         }
         return sb.toString();
     }

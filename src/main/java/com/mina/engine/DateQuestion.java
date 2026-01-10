@@ -129,6 +129,6 @@ public class DateQuestion extends Question implements Gradable {
             return false;
         }
 
-        return response.getAnswers().equals(answerKey);
+        return response.getResponse().equals(answerKey);
     }
 }

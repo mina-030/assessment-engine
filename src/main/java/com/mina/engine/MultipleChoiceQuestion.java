@@ -222,7 +222,7 @@ public class MultipleChoiceQuestion extends Question implements Gradable {
 
         // count all answers
         for (Response r : getUserResponse()) {
-            for (String ans : r.getAnswers()) {
+            for (String ans : r.getResponse()) {
                 if (ans == null) {
                     continue;
                 }

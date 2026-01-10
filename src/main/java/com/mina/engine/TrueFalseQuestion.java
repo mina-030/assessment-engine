@@ -70,7 +70,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
 
         // count all answers
         for (Response r : getUserResponse()) {
-            for (String ans : r.getAnswers()) {
+            for (String ans : r.getResponse()) {
                 if (ans == null) {
                     continue;
                 }
@@ -111,7 +111,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradabl
             return false;
         }
 
-        String user = response.getAnswers().getFirst();
+        String user = response.getResponse().getFirst();
         String correct = answerKey.getFirst();
 
         return user.equalsIgnoreCase(correct);

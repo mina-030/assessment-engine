@@ -70,7 +70,7 @@ public interface Gradable {
 
         // make a safe copy for checking the answer
         List<String> tempKey = new ArrayList<>(question.answerKey);
-        for (String userAnswer : response.getAnswers()) {
+        for (String userAnswer : response.getResponse()) {
             userAnswer = userAnswer.toLowerCase();
 
             if (!tempKey.contains(userAnswer)) {

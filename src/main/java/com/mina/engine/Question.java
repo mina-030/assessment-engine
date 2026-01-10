@@ -108,7 +108,7 @@ public abstract class Question implements Serializable, Gradable {
         StringBuilder sb = new StringBuilder();
 
         for (Response r : getUserResponse()) {
-            String ans = r.getAnswers().getFirst();
+            String ans = r.getResponse().getFirst();
             count.put(ans, count.getOrDefault(ans, 0) + 1);
         }
 
