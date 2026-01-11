@@ -74,13 +74,13 @@ public class Test extends Survey {
                     .append(q.displayQuestion())
                     .append("\n");
 
-            List<String> key = correctAnswer;
+            List<String> key = q.getAnswer();
             if (key != null && !key.isEmpty()) {
                 sb.append("Answer: ").append(String.join(", ", key));
             } else {
                 sb.append("Answer: (not auto-gradable)");
             }
-            sb.append("\n");
+            sb.append("\n\n");
         }
         return sb.toString();
     }
@@ -106,26 +106,25 @@ public class Test extends Survey {
 
     // grade the test based on the count of correct Answer and the total question we have
     public int grade() {
-        if (questions == null || questions.isEmpty()) {
-            return 0;
-        }
-
         int totalQuestions = questions.size();
+        int totalCorrectAnswers = countCorrectAnswer();
+        // count how many essay
         int essayCount = 0;
         for (Question q : questions) {
             if (q instanceof EssayQuestion) {
                 essayCount++;
             }
         }
+
+        //if autoGrable <= 0 means all essay questions
         int autoGradable = totalQuestions - essayCount;
         if (autoGradable <= 0) {
-            // All questions are essays = no auto-gradable question
             return 0;
         }
 
-        int totalCorrectAnswers = countCorrectAnswer();
-
-        double pointsPerQuestion = 100.0 / totalQuestions;
+        // calculate the auto-gradable questions
+        double maxAutoGradable = (double) (100 * autoGradable) / totalQuestions;
+        double pointsPerQuestion = maxAutoGradable / totalQuestions;
         double earnedPoints = pointsPerQuestion * totalCorrectAnswers;
 
         // round to nearest int

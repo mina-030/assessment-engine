@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
+public class ShortAnswerQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
     private int maxWord;
@@ -37,6 +37,11 @@ public class ShortAnswerQuestion extends EssayQuestion implements Gradable {
     // setter
     public void setMaxWord(int maxWord) {
         this.maxWord = maxWord;
+    }
+
+    @Override
+    public boolean validateResponse(String response) {
+        return Input.validator(response);
     }
 
     @Override

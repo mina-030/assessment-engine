@@ -192,18 +192,6 @@ public class SurveyMenu {
         System.out.println("Question modified.");
     }
 
-
-    // check if director exist
-    private static void ensureDirectoriesExist() {
-        try {
-            Files.createDirectories(SURVEY_DEFIN_DIR);
-            Files.createDirectories(SURVEY_RESP_DIR);
-        } catch (IOException e) {
-            System.out.println("Failed to initialize storage directories.");
-            System.exit(1); // fatal
-        }
-    }
-
     // save user responses method
     private static void saveSurveyResponses(Survey survey, String responseTitle) {
         // create a response directories if not exist

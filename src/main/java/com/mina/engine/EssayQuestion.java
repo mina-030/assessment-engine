@@ -25,6 +25,7 @@ public class EssayQuestion extends Question {
         setQuestionPrompt(prompt);
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
+        System.out.println("Reminder: Essay question type is not automatically gradable.");
     }
 
     // getter
@@ -90,16 +91,10 @@ public class EssayQuestion extends Question {
     }
 
     @Override
-    public void setAnswerKeyFromInput(Scanner sc) {
-        throw new UnsupportedOperationException(
-                "This question type is not automatically gradable"
-        );
-    }
+    public void setAnswerKeyFromInput(Scanner sc) {}
 
     @Override
     public boolean checkAnswer(Response response) {
-        throw new UnsupportedOperationException(
-                "This question type is not automatically gradable"
-        );
+        return false;
     }
 }

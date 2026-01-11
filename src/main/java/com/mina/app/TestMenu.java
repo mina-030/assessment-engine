@@ -53,11 +53,10 @@ public class TestMenu {
                     case 4 -> test = loadTest(sc);
                     case 5 -> saveTest(sc, test);
                     case 6 -> {
-                        // Take test (reuse survey take logic, also saves responses)
                         if (test == null || test.getQuestions().isEmpty()) {
                             System.out.println("You must have a test loaded in order to take it.");
                         } else {
-                            takeTest(sc, test);  // method already exists for Survey; Test extends Survey
+                            takeTest(sc, test);
                         }
                     }
                     case 7 -> modifyTest(sc, test);
@@ -359,17 +358,23 @@ public class TestMenu {
                 essayCount++;
             }
         }
-        int autoGradable = totalQuestions - essayCount;
 
         int score = test.grade();
 
-        double pointsPerQuestion = 100.0 / totalQuestions;
-        double possibleAutoPoints = autoGradable * pointsPerQuestion;
+        // print result based on have essay question or not
+        if (essayCount == 0) {
+            System.out.println("You received a " + score + " on the test.");
+        } else {
+            //count total score
+            int autoGradable = totalQuestions - essayCount;
+            double pointsPerQuestion = 100.0 / totalQuestions;
+            double possibleAutoPoints = autoGradable * pointsPerQuestion;
 
-        System.out.println("You received a " + score + " on the test.");
-        System.out.println("The test was worth 100 points, but only " +
-                Math.round(possibleAutoPoints) +
-                " of those points could be auto-graded because there were " +
-                essayCount + " essay question(s).");
+            System.out.println("You received a " + score + " on the test.");
+            System.out.println("The test was worth 100 points, but only " +
+                    Math.round(possibleAutoPoints) +
+                    " of those points could be auto-graded because there were " +
+                    essayCount + " essay question(s).");
+        }
     }
 }

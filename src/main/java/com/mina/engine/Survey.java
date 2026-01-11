@@ -13,15 +13,13 @@ public class Survey implements Serializable {
     protected String title;
     protected List<Question> questions;
     protected List<Response> responses;
-    protected List<String> tables;
     Scanner sc;
 
     // constructor
-    public Survey(String title, List<Question> questions, List<Response> responses, List<String> tables) {
+    public Survey(String title, List<Question> questions, List<Response> responses) {
         this.title = title;
         this.questions = questions;
         this.responses = responses;
-        this.tables = tables;
     }
 
     // simple constructor
@@ -29,7 +27,6 @@ public class Survey implements Serializable {
         this.title = "";
         this.questions = new ArrayList<Question>();
         this.responses = new ArrayList<Response>();
-        this.tables = new ArrayList<String>();
     }
 
     // getter
@@ -41,25 +38,13 @@ public class Survey implements Serializable {
         return responses;
     }
 
-    public List<String> getTables() {
-        return tables;
-    }
-
     public String getTitle() {
         return title;
     }
 
     // setter
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
     public void setResponses(List<Response> responses) {
         this.responses = responses;
-    }
-
-    public void setTables(List<String> tables) {
-        this.tables = tables;
     }
 
     public void setTitle(String title) {
