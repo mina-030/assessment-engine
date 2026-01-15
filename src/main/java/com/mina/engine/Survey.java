@@ -25,8 +25,8 @@ public class Survey implements Serializable {
     // simple constructor
     public Survey() {
         this.title = "";
-        this.questions = new ArrayList<Question>();
-        this.responses = new ArrayList<Response>();
+        this.questions = new ArrayList<>();
+        this.responses = new ArrayList<>();
     }
 
     // getter
@@ -64,19 +64,6 @@ public class Survey implements Serializable {
         return sb.toString();
     }
 
-    //display response method
-    public String displayResponse() {
-        StringBuilder sb = new StringBuilder();
-        int i = 1;
-        for (Response response : responses) {
-            sb.append(i++)
-                    .append(". ")
-                    .append(response.display())
-                    .append("\n");
-        }
-        return sb.toString();
-    }
-
     // modify method
     public boolean modify(int index) {
         if (index < 0 || index >= questions.size()) {
@@ -84,17 +71,6 @@ public class Survey implements Serializable {
         }
         Question question = questions.get(index);
         question.modifyPrompt(sc);
-        return true;
-    }
-
-    // take survey method
-    public boolean takeSurvey(Scanner sc) {
-        for (int i = 0; i < questions.size(); i++) {
-            Question question = questions.get(i);
-            System.out.println((i + 1) + ". " + question.displayQuestion());
-            Response r = question.collectResponse(sc);
-            responses.add(r);
-        }
         return true;
     }
 

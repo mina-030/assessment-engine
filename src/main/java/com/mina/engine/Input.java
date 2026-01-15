@@ -86,10 +86,9 @@ public class Input {
             return false;
         } else if (!checkMatchingResponseChar(response, choiceSize)) {
             return false;
-        } else if (!checkMatchingResponseInt(response, choiceSize)) {
-            return false;
+        } else {
+            return checkMatchingResponseInt(response, choiceSize);
         }
-        return true;
     }
 
     // check multiple choice format

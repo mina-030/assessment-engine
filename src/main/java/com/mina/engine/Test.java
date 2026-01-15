@@ -10,7 +10,7 @@ public class Test extends Survey {
     private static final long serialVersionUID = 1L;
 
     private String title;
-    private List<String> correctAnswer;
+    private final List<String> correctAnswer;
     private int score;
     Scanner sc;
 
@@ -26,34 +26,18 @@ public class Test extends Survey {
     // simple constructor
     public Test() {
         this.title = "";
-        this.questions = new ArrayList<Question>();
-        this.responses = new ArrayList<Response>();
-        this.correctAnswer = new ArrayList<String>();
+        this.questions = new ArrayList<>();
+        this.responses = new ArrayList<>();
+        this.correctAnswer = new ArrayList<>();
         this.score = 0;
     }
 
     // setter
-    public void setCorrectAnswer(List<String> correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
     // getter
-    public List<String> getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
     public String getTitle() {
         return title;
     }

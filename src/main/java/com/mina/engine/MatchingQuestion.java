@@ -3,15 +3,13 @@ package com.mina.engine;
 import java.util.*;
 import java.io.Serial;
 
-public class MatchingQuestion extends Question implements Gradable{
+public class MatchingQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private int choiceSize;
     private final List<String> leftOptions;
     private final List<String> rightOptions;
-    private final List<Character> leftResponse;
-    private final List<Integer> rightResponse;
 
     // constructor
     public MatchingQuestion(
@@ -21,16 +19,13 @@ public class MatchingQuestion extends Question implements Gradable{
             List<Response> responses,
             int choiceNum,
             List<String> leftOptions,
-            List<String> rightOptions,
-            List<Character> leftAnswer,
-            List<Integer> rightAnswer
+            List<String> rightOptions
     ) {
         super(questionPrompt, allowsMultiple, expectedAnswerCount, responses);
         this.choiceSize = choiceNum;
         this.leftOptions = leftOptions;
         this.rightOptions = rightOptions;
-        this.leftResponse = leftAnswer;
-        this.rightResponse = rightAnswer;
+
     }
 
     // simple constructor
@@ -42,8 +37,7 @@ public class MatchingQuestion extends Question implements Gradable{
         this(questionPrompt, true, 1, new ArrayList<>(),
                 (leftOptions != null ? leftOptions.size() : 0),
                 (leftOptions != null ? new ArrayList<>(leftOptions) : new ArrayList<>()),
-                (rightOptions != null ? new ArrayList<>(rightOptions) : new ArrayList<>()),
-                new ArrayList<>(), new ArrayList<>());
+                (rightOptions != null ? new ArrayList<>(rightOptions) : new ArrayList<>()));
     }
 
     // setter
@@ -361,7 +355,7 @@ public class MatchingQuestion extends Question implements Gradable{
     public void setAnswerKeyFromInput(Scanner sc) {
         int answerNum = getAnswerNum(sc, "Matching", getExpectedResponseCount());
         List<String> key = collectionAnswer(
-                sc,answerNum,
+                sc, answerNum,
                 "Matching",
                 Input::checkAnswerFormatOfMatching);
         super.setAnswer(key);
