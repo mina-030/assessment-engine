@@ -29,3 +29,5 @@ build/
 
 # macOS
 .DS_Store
+
+storage/
