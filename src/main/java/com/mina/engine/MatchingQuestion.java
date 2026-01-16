@@ -3,15 +3,13 @@ package com.mina.engine;
 import java.util.*;
 import java.io.Serial;
 
-public class MatchingQuestion extends Question {
+public class MatchingQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int choiceNum;
+    private int choiceSize;
     private final List<String> leftOptions;
     private final List<String> rightOptions;
-    private final List<Character> leftResponse;
-    private final List<Integer> rightResponse;
 
     // constructor
     public MatchingQuestion(
@@ -21,16 +19,13 @@ public class MatchingQuestion extends Question {
             List<Response> responses,
             int choiceNum,
             List<String> leftOptions,
-            List<String> rightOptions,
-            List<Character> leftAnswer,
-            List<Integer> rightAnswer
+            List<String> rightOptions
     ) {
         super(questionPrompt, allowsMultiple, expectedAnswerCount, responses);
-        this.choiceNum = choiceNum;
+        this.choiceSize = choiceNum;
         this.leftOptions = leftOptions;
         this.rightOptions = rightOptions;
-        this.leftResponse = leftAnswer;
-        this.rightResponse = rightAnswer;
+
     }
 
     // simple constructor
@@ -42,13 +37,12 @@ public class MatchingQuestion extends Question {
         this(questionPrompt, true, 1, new ArrayList<>(),
                 (leftOptions != null ? leftOptions.size() : 0),
                 (leftOptions != null ? new ArrayList<>(leftOptions) : new ArrayList<>()),
-                (rightOptions != null ? new ArrayList<>(rightOptions) : new ArrayList<>()),
-                new ArrayList<>(), new ArrayList<>());
+                (rightOptions != null ? new ArrayList<>(rightOptions) : new ArrayList<>()));
     }
 
     // setter
-    public void setChoiceNum(int num) {
-        this.choiceNum = num;
+    public void setChoiceSize(int num) {
+        this.choiceSize = num;
     }
 
     public void setLeftOptions(int index, String option) {
@@ -60,8 +54,8 @@ public class MatchingQuestion extends Question {
     }
 
     // getter
-    public int getChoiceNum() {
-        return choiceNum;
+    public int getChoiceSize() {
+        return choiceSize;
     }
 
     public String getLeftOption(int index) {
@@ -84,17 +78,16 @@ public class MatchingQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "matching");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
 
-        int choiceNum;
-        System.out.println("Enter the number of matching choices for your Matching question(options for one side):");
-        choiceNum = Input.checkInt(sc, 1, 1000);
-        setChoiceNum(choiceNum);
-        setExpectedResponseCount(choiceNum);
+        System.out.println("Enter the number of choices for your Matching question(options for one side):");
+        int choiceSize = Input.checkInt(sc, 1, 1000);
+        setChoiceSize(choiceSize);
+        setExpectedResponseCount(choiceSize);
 
         String choice;
         char letter = 'A';
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < choiceSize; i++) {
             while (true) {
                 System.out.println("Enter left choice #" + letter + ":");
                 choice = sc.nextLine().trim();
@@ -111,7 +104,7 @@ public class MatchingQuestion extends Question {
             }
         }
 
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < choiceSize; i++) {
             while (true) {
                 System.out.println("Enter right choice #" + (i + 1) + ":");
                 choice = sc.nextLine().trim();
@@ -130,28 +123,8 @@ public class MatchingQuestion extends Question {
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        if (answer == null || answer.trim().isEmpty()) {
-            return false;
-        }
-
-        String cleanResponse = answer.replaceAll("\\s+", "").toUpperCase();
-
-        if (cleanResponse.length() < 2) {
-            return false;
-        }
-
-        char letter = cleanResponse.charAt(0);
-        if (letter < 'A' || letter >= ('A' + getChoiceNum())) {
-            return false;
-        }
-
-        try {
-            int number = Integer.parseInt(cleanResponse.substring(1));
-            return number >= 1 && number <= getChoiceNum();
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    protected boolean validateResponse(String response) {
+        return Input.checkMatchingResponse(response, getChoiceSize());
     }
 
     // collect answer method
@@ -178,9 +151,8 @@ public class MatchingQuestion extends Question {
                 String cleanResponse = response.replaceAll("\\s+", "").toUpperCase();
 
                 if (!validateResponse(cleanResponse)) {
-                    Output.printErrorInvalidInputFormat("A1, B1, C3");
-                    System.out.println("Available left choices: A-" + (char) ('A' + getChoiceNum() - 1));
-                    System.out.println("Available right choices: 1-" + getChoiceNum());
+                    System.out.println("Available left choices: A-" + (char) ('A' + getChoiceSize() - 1));
+                    System.out.println("Available right choices: 1-" + getChoiceSize());
                     continue;
                 }
 
@@ -222,7 +194,7 @@ public class MatchingQuestion extends Question {
         // Create and return the actual Response object
         Response responseObj = new Response();
         for (String pair : matchingPairs) {
-            responseObj.addAnswer(pair);
+            responseObj.addResponse(pair);
         }
         addResponse(responseObj);
 
@@ -235,7 +207,7 @@ public class MatchingQuestion extends Question {
         StringBuilder sb = new StringBuilder();
 
         sb.append(getQuestionPrompt()).append("\n");
-        int count = getChoiceNum();
+        int count = getChoiceSize();
         char letter = 'A';
         for (int i = 0; i < count; i++) {
             sb.append(letter).append(") ")
@@ -249,7 +221,7 @@ public class MatchingQuestion extends Question {
     }
 
     // modify question method
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         // modify prompt
         String message = modifyPrompt(sc);
         System.out.println(message);
@@ -259,26 +231,28 @@ public class MatchingQuestion extends Question {
         String answer = sc.nextLine().trim();
 
         if (!answer.equalsIgnoreCase("yes")) {
-            return "No changes to choices.";
+            System.out.println("No changes to choices.");
         }
 
-        int choicesCount = getChoiceNum();
+        int choicesCount = getChoiceSize();
         Output.showMatchPairs(choicesCount, getAllLeftOptions(), getAllRightOptions());
 
         // Modify left choices
         System.out.println("--- Modify Left Choices ---");
+        Output.showOptionsInt(getChoiceSize(), getAllLeftOptions());
         modifyChoiceList(sc, "left", leftOptions);
 
         // Modify right choices
         System.out.println("--- Modify Right Choices ---");
+        Output.showOptionsInt(getChoiceSize(), getAllRightOptions());
         modifyChoiceList(sc, "right", rightOptions);
-
-        return "Modified successfully!";
     }
 
     // modify choice method
     private void modifyChoiceList(Scanner sc, String side, List<String> options) {
         while (true) {
+
+
             System.out.println(
                     "Select the " + side
                             + " option to modify (1-" + options.size()
@@ -315,9 +289,19 @@ public class MatchingQuestion extends Question {
                 setRightOptions(index, newOption);
             }
 
-            System.out.println("Option updated successfully!");
-            int choicesCount = getChoiceNum();
+            System.out.println("Option updated successfully!\n");
+
+            int choicesCount = getChoiceSize();
+            System.out.println("--- Updated Choice ---");
             Output.showMatchPairs(choicesCount, getAllLeftOptions(), getAllRightOptions()); // Show updated view
+
+            if (side.equals("left")) {
+                System.out.println("--- Modify Left Choices ---");
+                Output.showOptionsInt(getChoiceSize(), getAllLeftOptions());
+            } else {
+                System.out.println("--- Modify Right Choices ---");
+                Output.showOptionsInt(getChoiceSize(), getAllRightOptions());
+            }
         }
     }
 
@@ -329,7 +313,7 @@ public class MatchingQuestion extends Question {
         sb.append(getQuestionPrompt()).append("\n");
 
         // Display the options
-        int choiceCount = getChoiceNum();
+        int choiceCount = getChoiceSize();
         for (int i = 0; i < choiceCount; i++) {
             char letter = (char) ('A' + i);
             sb.append(letter).append(") ").append(getLeftOption(i)).append("\n");
@@ -343,7 +327,7 @@ public class MatchingQuestion extends Question {
         for (Response r : getUserResponse()) {
             // Build a string representation of this matching set
             List<String> sortedPairs = new ArrayList<>();
-            for (String pair : r.getAnswers()) {
+            for (String pair : r.getResponse()) {
                 sortedPairs.add(pair);
             }
             Collections.sort(sortedPairs);
@@ -366,47 +350,25 @@ public class MatchingQuestion extends Question {
     }
 
     // ------------------------------------ For Test ----------------------------------------
-    public void setAnswerKey(List<String> answerKeys) {
-        this.answerKey = answerKeys;
-    }
-
     // set answer key method
-    public void setQuestionAnswer(Scanner sc) {
-        Output.printAnswerQuestion("Matching (e.g. A1, B2, C3)");
-        List<String> key = new ArrayList<>();
-
-        for (int i = 0; i < getChoiceNum(); i++) {
-            while (true) {
-                System.out.println("Enter your answer " + (i + 1) + ": ");
-                String input = sc.nextLine().trim();
-
-                // check if the user's input is empty
-                if (!Input.validator(input)) {
-                    Output.printErrorEmptyInput();
-                    continue;
-                }
-
-                // check if the user's input is valid
-                if (!validateResponse(input)) {
-                    Output.printErrorInvalidInputString();
-                    continue;
-                }
-                // valid - now store it
-                key.add(input);
-                break;
-            }
-        }
-        super.setAnswerKey(key);
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "Matching", getExpectedResponseCount());
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "Matching",
+                Input::checkAnswerFormatOfMatching);
+        super.setAnswer(key);
     }
 
     // checkCorrect method for matching class
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
+    public boolean checkAnswer(Response response) {
+        if (response == null || response.getResponse().isEmpty()) {
             return false;
         }
         List<String> user = new ArrayList<>();
-        for (String s : response.getAnswers()) {
+        for (String s : response.getResponse()) {
             user.add(s.replaceAll("\\s+", "").toUpperCase());
         }
 

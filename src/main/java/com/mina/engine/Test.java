@@ -9,13 +9,14 @@ public class Test extends Survey {
     @Serial
     private static final long serialVersionUID = 1L;
 
-
-    private List<String> correctAnswer;
+    private String title;
+    private final List<String> correctAnswer;
     private int score;
     Scanner sc;
 
     //constructor
-    public Test(List<Question> questions, List<Response> responses, List<String> correctAnswer, int score) {
+    public Test(String title, List<Question> questions, List<Response> responses, List<String> correctAnswer, int score) {
+        this.title = title;
         this.questions = questions;
         this.responses = responses;
         this.correctAnswer = correctAnswer;
@@ -24,28 +25,21 @@ public class Test extends Survey {
 
     // simple constructor
     public Test() {
-        this.questions = new ArrayList<Question>();
-        this.responses = new ArrayList<Response>();
-        this.correctAnswer = new ArrayList<String>();
+        this.title = "";
+        this.questions = new ArrayList<>();
+        this.responses = new ArrayList<>();
+        this.correctAnswer = new ArrayList<>();
         this.score = 0;
     }
 
     // setter
-    public void setCorrectAnswer(List<String> correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // getter
-    public List<String> getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public int getScore() {
-        return score;
+    public String getTitle() {
+        return title;
     }
 
     // display a test without correct answers
@@ -64,13 +58,13 @@ public class Test extends Survey {
                     .append(q.displayQuestion())
                     .append("\n");
 
-            List<String> key = q.getAnswerKey();
+            List<String> key = q.getAnswer();
             if (key != null && !key.isEmpty()) {
                 sb.append("Answer: ").append(String.join(", ", key));
             } else {
                 sb.append("Answer: (not auto-gradable)");
             }
-            sb.append("\n");
+            sb.append("\n\n");
         }
         return sb.toString();
     }
@@ -83,11 +77,11 @@ public class Test extends Survey {
             Question q = questions.get(i);
             Response r = responses.get(i);
 
-            if (q instanceof EssayQuestion) {
+            if (!(q instanceof Gradable)) {
                 continue;
             }
 
-            if (q.checkCorrect(r)) {
+            if (((Gradable) q).checkAnswer(r)) {
                 correct++;
             }
         }
@@ -96,26 +90,25 @@ public class Test extends Survey {
 
     // grade the test based on the count of correct Answer and the total question we have
     public int grade() {
-        if (questions == null || questions.isEmpty()) {
-            return 0;
-        }
-
         int totalQuestions = questions.size();
+        int totalCorrectAnswers = countCorrectAnswer();
+        // count how many essay
         int essayCount = 0;
         for (Question q : questions) {
             if (q instanceof EssayQuestion) {
                 essayCount++;
             }
         }
+
+        //if autoGrable <= 0 means all essay questions
         int autoGradable = totalQuestions - essayCount;
         if (autoGradable <= 0) {
-            // All questions are essays = no auto-gradable question
             return 0;
         }
 
-        int totalCorrectAnswers = countCorrectAnswer();
-
-        double pointsPerQuestion = 100.0 / totalQuestions;
+        // calculate the auto-gradable questions
+        double maxAutoGradable = (double) (100 * autoGradable) / totalQuestions;
+        double pointsPerQuestion = maxAutoGradable / totalQuestions;
         double earnedPoints = pointsPerQuestion * totalCorrectAnswers;
 
         // round to nearest int

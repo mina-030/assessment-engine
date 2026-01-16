@@ -3,7 +3,7 @@ package com.mina.engine;
 import java.io.Serial;
 import java.util.*;
 
-public class TrueFalseQuestion extends MultipleChoiceQuestion {
+public class TrueFalseQuestion extends MultipleChoiceQuestion implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -13,7 +13,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
         setOptions(Arrays.asList("True", "False"));
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
-        setChoiceNum(2);
+        setChoiceSize(2);
     }
 
     //create Question method
@@ -21,13 +21,11 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
     public void createQuestion(Scanner sc) {
         System.out.println("Enter the prompt for your True/False question:");
         String prompt = sc.nextLine().trim();
-        setqPrompt(prompt);
-
-        List<String> tfOptions = Arrays.asList("True", "False");
-        setOptions(tfOptions);
+        setQuestionPrompt(prompt);
+        setOptions(Arrays.asList("True", "False"));
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
-        setChoiceNum(tfOptions.size());
+        setChoiceSize(2);
     }
 
     //collect Answer method
@@ -50,14 +48,14 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
     // validate Response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return Input.checkTrueFalse(answer);
+    protected boolean validateResponse(String response) {
+        return Input.checkTrueFalse(response);
     }
 
     // modify Question method
     @Override
-    public String modifyQuestion(Scanner sc) {
-        return modifyPrompt(sc);
+    public void modifyQuestion(Scanner sc) {
+        modifyPrompt(sc);
     }
 
     // tabulate Question method
@@ -72,7 +70,7 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
         // count all answers
         for (Response r : getUserResponse()) {
-            for (String ans : r.getAnswers()) {
+            for (String ans : r.getResponse()) {
                 if (ans == null) {
                     continue;
                 }
@@ -108,34 +106,24 @@ public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
     //grading method override (for true and false we only have one response and one answer)
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
+    public boolean checkAnswer(Response response) {
+        if (!Input.validator(String.valueOf(response))) {
             return false;
         }
 
-        String user = response.getAnswers().getFirst();
+        String user = response.getResponse().getFirst();
         String correct = answerKey.getFirst();
 
         return user.equalsIgnoreCase(correct);
     }
 
     // set Question with answer method
-    public void setQuestionAnswer(Scanner sc) {
-        answerKey.clear();
-
-        while (true) {
-            System.out.println("Enter the correct answer (True/False):");
-            String input = sc.nextLine().trim();
-
-            if (input.equalsIgnoreCase("t") || input.equalsIgnoreCase("true")) {
-                answerKey.add("True");
-                break;
-            } else if (input.equalsIgnoreCase("f") || input.equalsIgnoreCase("false")) {
-                answerKey.add("False");
-                break;
-            } else {
-                System.out.println("Invalid input. Please enter T or F.");
-            }
-        }
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "True False", getExpectedResponseCount());
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "True False",
+                Input::checkTrueFalse);
+        super.setAnswer(key);
     }
 }

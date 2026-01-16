@@ -10,23 +10,23 @@ public class Survey implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    protected String title;
     protected List<Question> questions;
     protected List<Response> responses;
-    protected List<String> tables;
     Scanner sc;
 
     // constructor
-    public Survey(List<Question> questions, List<Response> responses, List<String> tables) {
+    public Survey(String title, List<Question> questions, List<Response> responses) {
+        this.title = title;
         this.questions = questions;
         this.responses = responses;
-        this.tables = tables;
     }
 
     // simple constructor
     public Survey() {
-        this.questions = new ArrayList<Question>();
-        this.responses = new ArrayList<Response>();
-        this.tables = new ArrayList<String>();
+        this.title = "";
+        this.questions = new ArrayList<>();
+        this.responses = new ArrayList<>();
     }
 
     // getter
@@ -38,21 +38,17 @@ public class Survey implements Serializable {
         return responses;
     }
 
-    public List<String> getTables() {
-        return tables;
+    public String getTitle() {
+        return title;
     }
 
     // setter
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
     public void setResponses(List<Response> responses) {
         this.responses = responses;
     }
 
-    public void setTables(List<String> tables) {
-        this.tables = tables;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // display question method
@@ -68,38 +64,6 @@ public class Survey implements Serializable {
         return sb.toString();
     }
 
-    //display response method
-    public String displayResponse() {
-        StringBuilder sb = new StringBuilder();
-        int i = 1;
-        for (Response response : responses) {
-            sb.append(i++)
-                    .append(". ")
-                    .append(response.display())
-                    .append("\n");
-        }
-        return sb.toString();
-    }
-
-    //display Survey With Response method
-    public String displaySurveyWithResponse() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < questions.size(); i++) {
-            sb.append(i + 1)
-                    .append(". ")
-                    .append(questions.get(i).displayQuestion())
-                    .append("\n");
-
-            if (i < responses.size()) {
-                sb.append("Response: ")
-                        .append(responses.get(i).display())
-                        .append("\n");
-            }
-        }
-
-        return sb.toString();
-    }
-
     // modify method
     public boolean modify(int index) {
         if (index < 0 || index >= questions.size()) {
@@ -107,17 +71,6 @@ public class Survey implements Serializable {
         }
         Question question = questions.get(index);
         question.modifyPrompt(sc);
-        return true;
-    }
-
-    // take survey method
-    public boolean takeSurvey(Scanner sc) {
-        for (int i = 0; i < questions.size(); i++) {
-            Question question = questions.get(i);
-            System.out.println((i + 1) + ". " + question.displayQuestion());
-            Response r = question.collectResponse(sc);
-            responses.add(r);
-        }
         return true;
     }
 
@@ -133,24 +86,6 @@ public class Survey implements Serializable {
             sb.append(question.tabulateQuestion()).append("\n");
         }
         return sb.toString();
-    }
-
-    // retrieve question method
-    public Question retrieveQuestion(int index) {
-        if (index < 0 || index >= questions.size()) {
-            System.out.println("Invalid question number.");
-            return null;
-        }
-        return questions.get(index);
-    }
-
-    // retrieve responses method
-    public Response retrieveResponse(int index) {
-        if (index < 0 || index >= responses.size()) {
-            System.out.println("Invalid response number.");
-            return null;
-        }
-        return responses.get(index);
     }
 
     //create true false question method

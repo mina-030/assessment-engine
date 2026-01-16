@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class ShortAnswerQuestion extends EssayQuestion {
+public class ShortAnswerQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
     private int maxWord;
+    private static final String SA_QUESTION_TYPE = "Short Answer";
 
     public ShortAnswerQuestion(
             String questionPrompt,
@@ -39,10 +40,20 @@ public class ShortAnswerQuestion extends EssayQuestion {
     }
 
     @Override
+    public boolean validateResponse(String response) {
+        return Input.validator(response);
+    }
+
+    @Override
+    public String displayQuestion() {
+        return displayPrompt() + " (Max Words: " + maxWord + ")";
+    }
+
+    @Override
     public void createQuestion(Scanner sc) {
         // create prompt
-        String prompt = Input.readPromptUntilValid(sc, "Short Answer");
-        setqPrompt(prompt);
+        String prompt = Input.readPromptUntilValid(sc, SA_QUESTION_TYPE);
+        setQuestionPrompt(prompt);
 
         // ask the maximum words of the question
         while (true) {
@@ -60,7 +71,7 @@ public class ShortAnswerQuestion extends EssayQuestion {
         while (true) {
             System.out.println("Do you allow multiple answers? (yes/no)");
             String answer = sc.nextLine().trim().toLowerCase();
-            if (answer.equals("yes")) {
+            if (answer.equalsIgnoreCase("yes")) {
                 setAllowsMultiple(true);
 
                 while (true) {
@@ -78,7 +89,7 @@ public class ShortAnswerQuestion extends EssayQuestion {
                     }
                 }
                 break;
-            } else if (answer.equals("no")) {
+            } else if (answer.equalsIgnoreCase("no")) {
                 setAllowsMultiple(false);
                 setExpectedResponseCount(1);
                 break;
@@ -90,7 +101,7 @@ public class ShortAnswerQuestion extends EssayQuestion {
 
     // modify question method
     @Override
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         String message = modifyPrompt(sc);
         System.out.println(message);
 
@@ -115,8 +126,40 @@ public class ShortAnswerQuestion extends EssayQuestion {
                 }
             }
         }
+    }
 
-        return "Short answer question modified successfully";
+    // collect response method
+    @Override
+    public Response collectResponse(Scanner sc) {
+        clearResponses();
+
+        int count = getExpectedResponseCount();
+        int maxWord = getMaxWord();
+        Response lastResponse = null;
+
+        for (int i = 0; i< count; i++) {
+            while (true) {
+                System.out.println("Enter your response:");
+                String response = sc.nextLine().trim();
+
+                if (!Input.validator(response)) {
+                    Output.printErrorEmptyInput();
+                    continue;
+                }
+
+                if (!Input.checkShortAnswerWordLength(maxWord, response)) {
+                    Output.printErrorOverMaxWordLength(maxWord);
+                    continue;
+                }
+
+                Response r = new Response(response);
+                addResponse(r);
+                lastResponse = r;
+
+                break;
+            }
+        }
+        return lastResponse;
     }
 
     // tabulate question method
@@ -125,52 +168,21 @@ public class ShortAnswerQuestion extends EssayQuestion {
         return tabulateOneOption();
     }
 
-    // set answer ket method
-    public void setQuestionAnswer(Scanner sc) {
-        Output.printAnswerQuestion("Matching");
-        List<String> key = new ArrayList<>();
-
-        for (int i = 0; i < getExpectedResponseCount(); i++) {
-            while (true) {
-                System.out.println("Enter your " + (i + 1) + " answer: ");
-                String input = sc.nextLine().trim();
-
-                // check if the user's input is empty
-                if (!Input.validator(input)) {
-                    Output.printErrorEmptyInput();
-                    continue;
-                }
-
-                // check if the user's input is valid
-                if (!validateResponse(input)) {
-                    Output.printErrorInvalidInputString();
-                    continue;
-                }
-                // valid - now store it
-                key.add(input);
-                break;
-            }
-        }
-        super.setAnswerKey(key);
+    // set answer key method
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, SA_QUESTION_TYPE, getExpectedResponseCount());
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                SA_QUESTION_TYPE,
+                input -> Input.checkShortAnswerWordLength(maxWord, input)
+                );
+        super.setAnswer(key);
     }
 
     // grading method
     @Override
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        // make a safe copy for checking the answer
-        List<String> tempKey = new ArrayList<>(answerKey);
-        for (String userAnswer : response.getAnswers()) {
-            userAnswer = userAnswer.toLowerCase();
-
-            if (!tempKey.contains(userAnswer)) {
-                return false;
-            }
-            tempKey.remove(userAnswer);
-        }
-        return tempKey.isEmpty();
+    public boolean checkAnswer(Response response) {
+        return Gradable.generalCheckAnswer(response, this);
     }
 }

@@ -3,11 +3,11 @@ package com.mina.engine;
 import java.util.*;
 import java.io.Serial;
 
-public class MultipleChoiceQuestion extends Question {
+public class MultipleChoiceQuestion extends Question implements Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int choiceNum;
+    private int choiceSize;
     private List<String> options = new ArrayList<>();
 
     public MultipleChoiceQuestion(
@@ -15,10 +15,10 @@ public class MultipleChoiceQuestion extends Question {
             boolean allowsMultiple,
             int expectedAnswerCount,
             List<Response> responses,
-            int choiceNum
+            int choiceSize
     ) {
         super(questionPrompt, allowsMultiple, expectedAnswerCount, responses);
-        this.choiceNum = choiceNum;
+        this.choiceSize = choiceSize;
     }
 
     //    convenience constructor
@@ -27,8 +27,8 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     //    setter
-    public void setChoiceNum(int choiceNum) {
-        this.choiceNum = choiceNum;
+    public void setChoiceSize(int choiceSize) {
+        this.choiceSize = choiceSize;
     }
 
     public void setOptions(List<String> options) {
@@ -36,26 +36,43 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     //    getter
-    public int getChoiceNum() {
-        return choiceNum;
+    public int getChoiceSize() {
+        return choiceSize;
     }
 
     public List<String> getOptions() {
         return Collections.unmodifiableList(options);
     }
 
-    //    Add options method
-    public void addOption(String option) {
-        options.add(option);
-    }
+    // inheritance override methods from superclass (Question)
+    // validate response method
+    @Override
+    protected boolean validateResponse(String response) {
+        if (!Input.validator(response)) {
+            return false;
+        }
 
-//    inheritance override methods from superclass (Question)
+        response = response.trim().toUpperCase();
+        if (response.length() != 1) {
+            System.out.println("Please enter a single letter (A, B, C, etc.).");
+            return false;
+        }
+
+        char c = response.charAt(0);
+        if (c < 'A' || c >= ('A' + getOptions().size())) {
+            System.out.println("Please enter a letter between A and " +
+                    (char) ('A' + getOptions().size() - 1));
+            return false;
+        }
+
+        return true;
+    }
 
     // create question method
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "Multiple Choice");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
 
         int choiceNum;
         while (true) {
@@ -70,10 +87,10 @@ public class MultipleChoiceQuestion extends Question {
                 System.out.println("Please enter a valid number.");
             }
         }
-        setChoiceNum(choiceNum);
+        setChoiceSize(choiceNum);
 
         char letter = 'A';
-        for (int i = 0; i < choiceNum; i++) {
+        for (int i = 0; i < getChoiceSize(); i++) {
             while (true) {
                 System.out.println("Enter choice #" + letter + ":");
                 String choice = sc.nextLine().trim();
@@ -117,7 +134,7 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     // modify question method
-    public String modifyQuestion(Scanner sc) {
+    public void modifyQuestion(Scanner sc) {
         // modify prompt
         String message = modifyPrompt(sc);
         System.out.println(message);
@@ -154,32 +171,6 @@ public class MultipleChoiceQuestion extends Question {
                 break;
             }
         }
-
-        return "Question updated successfully";
-    }
-
-    // validate response method
-    @Override
-    protected boolean validateResponse(String answer) {
-        if (answer == null || answer.trim().isEmpty()) {
-            System.out.println("Response cannot be empty.");
-            return false;
-        }
-
-        answer = answer.trim().toUpperCase();
-        if (answer.length() != 1) {
-            System.out.println("Please enter a single letter (A, B, C, etc.).");
-            return false;
-        }
-
-        char c = answer.charAt(0);
-        if (c < 'A' || c >= ('A' + getOptions().size())) {
-            System.out.println("Please enter a letter between A and " +
-                    (char) ('A' + getOptions().size() - 1));
-            return false;
-        }
-
-        return true;
     }
 
     // collect answer method
@@ -224,14 +215,14 @@ public class MultipleChoiceQuestion extends Question {
 
 
         // initialize counts for A, B, C, D...
-        for (int i = 0; i < getChoiceNum(); i++) {
+        for (int i = 0; i < getChoiceSize(); i++) {
             String option = Character.toString((char) ('A' + i));
             count.put(option, 0);
         }
 
         // count all answers
         for (Response r : getUserResponse()) {
-            for (String ans : r.getAnswers()) {
+            for (String ans : r.getResponse()) {
                 if (ans == null) {
                     continue;
                 }
@@ -256,53 +247,17 @@ public class MultipleChoiceQuestion extends Question {
 
 
     // set answer key method
-    public void setQuestionAnswer(Scanner sc) {
-        Output.printAnswerQuestion("Multiple choice");
-        System.out.println("Enter the number of answers for your multiple-choice question:");
-        int answerNum = sc.nextInt();
-        List<String> key = new ArrayList<>();
-
-        for (int i = 0; i < answerNum; i++) {
-            while (true) {
-                System.out.println("Enter your answer " + (i + 1) + ": ");
-                String input = sc.nextLine().trim();
-
-                // check if the user's input is empty
-                if (!Input.validator(input)) {
-                    Output.printErrorEmptyInput();
-                    continue;
-                }
-
-                // check if the user's input is valid
-                if (!validateResponse(input)) {
-                    Output.printErrorInvalidInputString();
-                    continue;
-                }
-                // valid - now store it
-                key.add(input);
-                break;
-            }
-        }
-        super.setAnswerKey(key);
+    public void setAnswerKeyFromInput(Scanner sc) {
+        int answerNum = getAnswerNum(sc, "Multiple Choice", getExpectedResponseCount());
+        List<String> key = collectionAnswer(
+                sc, answerNum,
+                "Multiple Choice",
+                input -> Input.checkMultiResponse(input, options.size()));
+        super.setAnswer(key);
     }
 
     @Override
-    public boolean checkCorrect
-            (Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        // make a safe copy for checking the answer
-        List<String> tempKey = new ArrayList<>(answerKey);
-        for (String userAnswer : response.getAnswers()) {
-            userAnswer = userAnswer.toLowerCase();
-
-            if (!tempKey.contains(userAnswer)) {
-                return false;
-            }
-            tempKey.remove(userAnswer);
-        }
-        return tempKey.isEmpty();
+    public boolean checkAnswer(Response response) {
+        return Gradable.generalCheckAnswer(response, this);
     }
 }

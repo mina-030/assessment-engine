@@ -22,9 +22,10 @@ public class EssayQuestion extends Question {
     @Override
     public void createQuestion(Scanner sc) {
         String prompt = Input.readPromptUntilValid(sc, "Essay");
-        setqPrompt(prompt);
+        setQuestionPrompt(prompt);
         setAllowsMultiple(false);
         setExpectedResponseCount(1);
+        System.out.println("Reminder: Essay question type is not automatically gradable.");
     }
 
     // getter
@@ -34,8 +35,8 @@ public class EssayQuestion extends Question {
 
     // validate response method
     @Override
-    protected boolean validateResponse(String answer) {
-        return Input.validator(answer);
+    protected boolean validateResponse(String response) {
+        return Input.validator(response);
     }
 
     // collect answer method
@@ -51,7 +52,8 @@ public class EssayQuestion extends Question {
                 System.out.println("Enter your response:");
                 String response = sc.nextLine().trim();
 
-                if (!Input.validator(response)) {
+                if (!validateResponse(response)) {
+                    Output.printErrorEmptyInput();
                     continue;
                 }
 
@@ -73,8 +75,8 @@ public class EssayQuestion extends Question {
 
     // modify question method
     @Override
-    public String modifyQuestion(Scanner sc) {
-        return modifyPrompt(sc);
+    public void modifyQuestion(Scanner sc) {
+        modifyPrompt(sc);
     }
 
     // tabulate question method
@@ -83,13 +85,16 @@ public class EssayQuestion extends Question {
         StringBuilder sb = new StringBuilder();
 
         for (Response r : getUserResponse()) {
-            sb.append(r.getAnswers().getFirst()).append("\n\n");
+            sb.append(r.getResponse().getFirst()).append("\n\n");
         }
         return sb.toString();
     }
 
-    // set Question with answer method
-    public void setQuestionAnswer(Scanner sc) {
-        setAnswerKey(null);
+    @Override
+    public void setAnswerKeyFromInput(Scanner sc) {}
+
+    @Override
+    public boolean checkAnswer(Response response) {
+        return false;
     }
 }

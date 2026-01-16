@@ -8,56 +8,42 @@ import java.util.List;
 public class Response implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    protected List<String> answer;
+    protected List<String> response;
 
     public Response() {
-        this.answer = new ArrayList<String>();
+        this.response = new ArrayList<>();
     }
 
-    public Response(String answer) {
+    public Response(String input) {
         this();
-        this.answer.add(answer);
+        this.response.add(input);
     }
 
-    public Response(List<String> answer) {
-        this.answer = answer;
+    public Response(List<String> response) {
+        this.response = response;
     }
 
-    public List<String> getAnswers() {
-        return answer;
+    public List<String> getResponse() {
+        return response;
     }
 
-    public void setAnswer(List<String> answer) {
-        this.answer = answer;
+    public void setResponse(List<String> response) {
+        this.response = response;
     }
 
-    public void addAnswer(String answer) {
-        this.answer.add(answer);
+    public void addResponse(String input) {
+        this.response.add(input);
     }
 
     public String display() {
-        if (answer.isEmpty()) {
-            return "No answer";
+        if (response.isEmpty()) {
+            return "No Response";
         }
 
-        if (answer.size() == 1) {
-            return answer.get(0);
+        if (response.size() == 1) {
+            return response.getFirst();
         }
 
-        return String.join(", ", answer);
-    }
-
-    public void saveAnswer(String answer) {
-        addAnswer(answer);
-    }
-
-    public void loadAnswer(List<String> savedAnswer) {
-        this.answer = savedAnswer;
-    }
-
-    public void modifyAnswer(int index, String newAnswer) {
-        if (index >= 0 && index < answer.size()) {
-            answer.set(index, newAnswer);
-        }
+        return String.join(", ", response);
     }
 }

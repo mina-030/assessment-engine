@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.*;
 
 
-public abstract class Question implements Serializable {
+public abstract class Question implements Serializable, Gradable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -13,12 +13,11 @@ public abstract class Question implements Serializable {
     protected boolean allowsMultiple;
     protected int expectedResponseCount;
     private List<Response> responses;
-
     protected List<String> answerKey = new ArrayList<>();
 
     //    Constructor
-    public Question(String qPrompt, boolean allowsMultiple, int expectedAnswerCount, List<Response> responses) {
-        this.qPrompt = qPrompt;
+    public Question(String questionPrompt, boolean allowsMultiple, int expectedAnswerCount, List<Response> responses) {
+        this.qPrompt = questionPrompt;
         this.allowsMultiple = allowsMultiple;
         this.expectedResponseCount = expectedAnswerCount;
         this.responses = (responses != null) ? responses : new ArrayList<>();
@@ -42,9 +41,13 @@ public abstract class Question implements Serializable {
         return responses;
     }
 
+    public List<String> getAnswer() {
+        return answerKey;
+    }
+
     //    Setter
-    public void setqPrompt(String qPrompt) {
-        this.qPrompt = qPrompt;
+    public void setQuestionPrompt(String questionPrompt) {
+        this.qPrompt = questionPrompt;
     }
 
     public void setAllowsMultiple(boolean allowsMultiple) {
@@ -61,6 +64,10 @@ public abstract class Question implements Serializable {
         } else {
             this.responses = new ArrayList<>();
         }
+    }
+
+    public void setAnswer(List<String> answerKey) {
+        this.answerKey = answerKey;
     }
 
     //    Add Response Method
@@ -88,7 +95,7 @@ public abstract class Question implements Serializable {
                     Output.printErrorInvalidInputString();
                     continue;
                 }
-                setqPrompt(prompt);
+                setQuestionPrompt(prompt);
                 break;
             }
         }
@@ -101,7 +108,7 @@ public abstract class Question implements Serializable {
         StringBuilder sb = new StringBuilder();
 
         for (Response r : getUserResponse()) {
-            String ans = r.getAnswers().getFirst();
+            String ans = r.getResponse().getFirst();
             count.put(ans, count.getOrDefault(ans, 0) + 1);
         }
 
@@ -122,42 +129,13 @@ public abstract class Question implements Serializable {
     // Abstract Methods for the subclass (can be modified) (display, modify, collectResponse, validateResponse)
     public abstract void createQuestion(Scanner sc);
 
-    protected abstract boolean validateResponse(String answer);
+    protected abstract boolean validateResponse(String response);
 
     public abstract Response collectResponse(Scanner sc);
 
     public abstract String displayQuestion();
 
-    public abstract String modifyQuestion(Scanner sc);
+    public abstract void modifyQuestion(Scanner sc);
 
     public abstract String tabulateQuestion();
-
-    // --------------------------- For test---------------------------------
-    public void setAnswerKey(List<String> answerKey) {
-        this.answerKey = answerKey;
-    }
-
-    public List<String> getAnswerKey() {
-        return answerKey;
-    }
-
-    // checkCorrect method
-    public boolean checkCorrect(Response response) {
-        if (response == null || response.getAnswers().isEmpty()) {
-            return false;
-        }
-
-        String user = response.getAnswers().getFirst();
-        String correct = answerKey.getFirst();
-
-        return user.equalsIgnoreCase(correct);
-    }
-
-    public abstract void setQuestionAnswer(Scanner sc);
-
-    // set question with answer for test
-    public void setQuestionWithAnswer(Scanner sc) {
-        createQuestion(sc);
-        setQuestionAnswer(sc);
-    }
 }
